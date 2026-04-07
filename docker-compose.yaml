@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:16-alpine
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  backend:
+    build: ./backend
+    working_dir: /app
+    env_file:
+      - .env
+    volumes:
+      - ./backend/backend:/app
+    command: python manage.py runserver 0.0.0.0:8000
+    expose:
+      - 8000
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:latest
+    working_dir: /app
+    ports: [ "80:80" ]
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+
+  # telegram:
+  #   build: ./telegram_bot
+  #   env_file:
+  #     - .env
+  #   expose:
+  #     - 8001
+  #   command: python main.py
+  #   depends_on:
+  #     - nginx
+
+  test:
+    build: ./test
+    depends_on:
+      - backend
+volumes:
+  postgres_data:

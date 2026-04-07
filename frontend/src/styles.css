@@ -1,0 +1,35 @@
+*,
+html,
+body {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    height: 64px;
+    width: 100vw;
+    padding: 8px 48px;
+}
+
+.header-btn {
+    padding: 8px 12px;
+}
+
+.row-center {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.row-center-baseline {
+    display: flex;
+    flex-direction: row;
+    justify-content: baseline;
+    align-items: center;
+}
+
+.p16 {
+    padding: 16px;
+}
