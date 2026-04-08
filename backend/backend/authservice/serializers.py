@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import password_validation
 
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
@@ -14,7 +15,8 @@ class SignUpSerializer(serializers.ModelSerializer):
         model = User
         fields = ('username', 'password')
 
-    password = serializers.CharField(write_only=True)
+    username = serializers.CharField(required=True, validators=[UniqueValidator(User.objects.all(), "This username is already taken.")])
+    password = serializers.CharField(write_only=True, required=True)
 
     def validate_password(self, value):
         password_validation.validate_password(value)
@@ -28,25 +30,12 @@ class SignUpSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.Serializer):
-
     username = serializers.CharField(required=True)
     password = serializers.CharField(write_only=True, required=True)
 
-    def validate(self, attrs):
-        user = authenticate(username=attrs['username'], password=attrs['password'])
-
-        if user is None:
-            raise serializers.ValidationError("No such account exist.")
-        if not user.is_active:
-            raise serializers.ValidationError("This account is not active.")
-        
-        attrs['user'] = user
-        
-        return attrs
 
 class LogoutSerializer(serializers.Serializer):
-    
-    refresh = serializers.CharField(required=True)
+    refresh = serializers.CharField(write_only=True, required=True)
 
 class CustomRefreshSerializer(TokenRefreshSerializer):
     def validate(self, attrs):

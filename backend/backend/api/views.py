@@ -15,9 +15,12 @@ from .permissions import IsCommentOwner
 class PendingDisciplineViewSet(viewsets.ModelViewSet):
     queryset = PendingDiscipline.objects.all()
     serializer_class = PendingDisciplineSerializer
-
+    def get_serializer(self, *args, **kwargs):
+        if self.action == 'approve':
+            return None
+        return super().get_serializer(*args, **kwargs)
     def get_permissions(self):
-        if self.action in 'create':
+        if self.action == 'create':
             return [permissions.IsAuthenticated()]
         return [permissions.IsAdminUser()]
 
@@ -27,12 +30,11 @@ class PendingDisciplineViewSet(viewsets.ModelViewSet):
         record_data = PendingDisciplineSerializer(record).data
         record_data.pop('id', None)
 
-        serializer = DisciplineSerializer(data=record_data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(approved_by=request.user)
+        Discipline.objects.create(**record_data, approved_by=request.user)
+        
         record.delete()
 
-        return Response(status=status.HTTP_201_CREATED)
+        return Response({"detail" : "Successfully approved"},status=status.HTTP_201_CREATED)
 
 class DisciplineViewSet(viewsets.ModelViewSet):
     queryset = Discipline.objects.prefetch_related('comments__author').all()

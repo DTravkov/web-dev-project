@@ -1,10 +1,10 @@
+from django.contrib.auth import authenticate
 from rest_framework import status, serializers
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.exceptions import APIException
-
+from rest_framework.exceptions import APIException, AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import TokenError
@@ -34,6 +34,34 @@ class AuthViewSet(GenericViewSet):
         
         return [AllowAny()]
     
+
+    @action(detail=False, methods=['POST'])
+    def signup(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.save()
+
+        return Response( {"detail" : "Successful sign up" }, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['POST'])
+    def login(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = authenticate(username=serializer.validated_data['username'], password=serializer.validated_data['password'])
+
+        if user is None:
+            raise AuthenticationFailed("No user with given credentials exist.", code=status.HTTP_404_NOT_FOUND)
+        if not user.is_active:
+            raise AuthenticationFailed("This account is not active/banned.",code=status.HTTP_403_FORBIDDEN)
+        
+        refresh = RefreshToken.for_user(user)
+        access = refresh.access_token
+
+        return Response({"refresh" : str(refresh), "access" : str(access)}, status=status.HTTP_200_OK)
+
+    
     @action(detail=False, methods=['POST'])
     def logout(self, request):
         serializer = self.get_serializer(data=request.data)
@@ -49,31 +77,6 @@ class AuthViewSet(GenericViewSet):
         return Response({"detail" : "Successful logout"}, status=status.HTTP_200_OK)
     
 
-    @action(detail=False, methods=['POST'])
-    def login(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        refresh = RefreshToken.for_user(serializer.validated_data['user'])
-        access = refresh.access_token
-
-        return Response( { "refresh" : str(refresh),
-                           "access" : str(access) }, status=status.HTTP_200_OK)
-    
-
-    @action(detail=False, methods=['POST'])
-    def signup(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        user = serializer.save()
-        
-        refresh = RefreshToken.for_user(user)
-        access = refresh.access_token
-
-        return Response( { "refresh" : str(refresh),
-                           "access" : str(access) }, status=status.HTTP_200_OK)
-    
     @action(detail=False, methods=['POST'])
     def refresh(self, request):
         serializer = self.get_serializer(data=request.data)
