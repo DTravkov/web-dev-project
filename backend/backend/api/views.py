@@ -4,7 +4,8 @@ from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny, IsAuthenticated
-
+from django.shortcuts import get_object_or_404
+from rest_framework import filters
 
 from .serializers import CommentSerializer, DisciplineSerializer, PendingDisciplineSerializer
 from .models import Discipline, Comment, PendingDiscipline
@@ -75,5 +76,35 @@ class CommentViewSet(NoUpdateModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+    @action(methods=['POST'],detail = True)
+    def like(self,request, pk):
+        comment = self.get_object()
+        user = self.request.user
+
+        if user in comment.likes.all():
+            comment.likes.remove(user)
+        else:
+            comment.likes.add(user)
+            comment.dislikes.remove(user)
+        
+        return Response(status=status.HTTP_200_OK)
+    
+    @action(methods=['POST'],detail = True)
+    def islike(self,request,pk):
+        comment = self.get_object()
+        user = self.request.user
+
+        if user in comment.dislikes.all():
+            comment.dislikes.remove(user)
+        else:
+            comment.dislikes.add(user)
+            comment.likes.remove(user)
+        
+        return Response(status = status.HTTP_200_OK)
+        
+
+
     
     
