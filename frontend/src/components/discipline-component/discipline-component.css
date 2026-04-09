@@ -2,6 +2,10 @@ textarea {
     resize: none;
 }
 
+hr {
+    margin: 12px;
+}
+
 .comment-form {
     text-align: left;
     padding-bottom: 100px;

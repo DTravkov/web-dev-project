@@ -69,6 +69,8 @@ class CommentViewSet(NoUpdateModelViewSet):
             return [IsAdminUser()]
         if self.action in ['list', 'retrieve']:
             return [AllowAny()]
+        if self.action == 'create':
+            return [IsAuthenticated()]
         return [IsAuthenticated(),IsCommentOwner()]
 
     def perform_create(self, serializer):

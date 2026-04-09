@@ -7,6 +7,10 @@
                 <p>Your rating (from 1 to 5) : </p>
                 <input type="number" min="1" max="5" [(ngModel)]="currentRating">
             </div>
+            @if(errorMsg()){
+            <p class="error-msg">{{errorMsg()}}</p>
+            }
+
             <button class="comment-btn" (click)="onCommentSubmit()">
                 <p>Отправить</p>
             </button>
@@ -16,7 +20,12 @@
         @for(comment of comments(); track $index){
         <div class="comment col">
             <div class="row-center-space-between m4">
-                <p>{{comment.author.username}}</p>
+                <div class="row">
+                    <p>{{comment.author.username}}</p>
+                    <hr>
+                    <p>{{"Rating : " + "*".repeat(comment.rating)}}</p>
+                </div>
+
                 <p>{{comment.created_at.slice(0,10)}}</p>
 
             </div>

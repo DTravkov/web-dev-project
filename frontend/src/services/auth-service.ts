@@ -35,15 +35,8 @@ export class AuthService {
   }
 
   logout() {
-
-    const refresh = localStorage.getItem('refresh');
-    const access = localStorage.getItem('access');
-
-    if (access) localStorage.removeItem('access');
-    if (refresh) {
-      this.api.postLogout(refresh).subscribe();
-      localStorage.removeItem('refresh');
-    }
+    localStorage.removeItem('access');
+    localStorage.removeItem('refresh');
   }
 
 

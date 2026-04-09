@@ -9,7 +9,7 @@ export const authErrorInterceptor: HttpInterceptorFn = (req, next) => {
     const auth = inject(AuthService);
     return next(req).pipe(
         catchError((err) => {
-            if (err.status !== 401) return next(req);
+            if (err.status !== 401) return throwError(() => err);
             const refresh = localStorage.getItem('refresh');
             if (refresh) {
                 return auth.postRefresh(refresh).pipe(
