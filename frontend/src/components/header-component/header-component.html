@@ -1,0 +1,38 @@
+<div class="header row-center-space-between">
+    <div class="row-center-baseline">
+        <div class="header-btn" (click)="onLogoClicked()">
+            <strong>
+                <p>Logo</p>
+            </strong>
+        </div>
+        <div class="header-btn" (click)="onLogoClicked()">
+            <strong>
+                <p>Discipline List</p>
+            </strong>
+        </div>
+    </div>
+    <div class="row-center-baseline">
+        @if(!this.auth.isLoggedIn()){
+        <div class="header-btn" (click)="onSignupClicked()">
+            <strong>
+                <p>Sign up</p>
+            </strong>
+        </div>
+
+        <div class="header-btn" (click)="onLoginClicked()">
+            <strong>
+                <p>Log in</p>
+            </strong>
+        </div>
+        }
+        @else{
+        <div class="header-btn" (click)="onLogoutClicked()">
+            <strong>
+                <p>Logout</p>
+            </strong>
+        </div>
+        }
+
+    </div>
+
+</div>

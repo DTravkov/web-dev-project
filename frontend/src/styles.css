@@ -6,14 +6,46 @@ body {
     padding: 0;
 }
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 .header {
     height: 64px;
     width: 100vw;
-    padding: 8px 48px;
+    padding: 8px 200px;
+    background-color: rgb(240, 240, 240);
 }
+
 
 .header-btn {
     padding: 8px 12px;
+    cursor: pointer;
+}
+
+.form {
+    width: 400px;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.col-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .row-center {
@@ -23,6 +55,14 @@ body {
     align-items: center;
 }
 
+.row-right {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+
 .row-center-baseline {
     display: flex;
     flex-direction: row;
@@ -30,6 +70,37 @@ body {
     align-items: center;
 }
 
+.row-center-space-between {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.row-center-space-evenly {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.m4 {
+    margin: 4px;
+}
+
+.m8 {
+    margin: 8px;
+}
+
+.p8 {
+    padding: 8px;
+}
+
 .p16 {
     padding: 16px;
+}
+
+.g6 {
+    gap: 0px 6px;
 }

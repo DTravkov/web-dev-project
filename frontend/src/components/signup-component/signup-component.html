@@ -1,0 +1,12 @@
+<h2>Hi there! Lets create a new user</h2>
+<div class="col-center">
+    <div class="col form">
+        <input type="text" [(ngModel)]="username" class="field">
+        <input type="password" [(ngModel)]="password" class="field">
+        <div class="row g6">
+            <button class="submit-btn" (click)="onSubmitPressed()">Signup</button>
+            <button class="submit-btn" (click)="onRedirectPressed()">Already have an account?</button>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,11 @@
+<div class="outer">
+
+    <div class="list">
+        @for(btn of buttons();track btn.name){
+        <app-button-component [id]="btn.id" [action]="btn.name"
+            (clickedEvent)="onButtonClicked($event)"></app-button-component>
+        }
+    </div>
+
+
+</div>

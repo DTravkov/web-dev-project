@@ -40,16 +40,25 @@ class PendingDisciplineViewSet(NoUpdateModelViewSet):
 
 class DisciplineViewSet(viewsets.ModelViewSet):
     queryset = Discipline.objects.prefetch_related('comments__author').all()
-    serializer_class = DisciplineSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'comments':
+            return CommentSerializer
+        return DisciplineSerializer
+    
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve']:
+        if self.action in ['list', 'retrieve', 'comments']:
             return [AllowAny()]
         return [IsAdminUser()]
     
     def perform_create(self, serializer):
         return serializer.save(approved_by=self.request.user)
     
+    @action(methods=['GET'], detail=True)
+    def comments(self, request, pk):
+        serializer = self.get_serializer(Comment.objects.filter(discipline__id=pk), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class CommentViewSet(NoUpdateModelViewSet):
     queryset = Comment.objects.select_related('author', 'discipline').all()

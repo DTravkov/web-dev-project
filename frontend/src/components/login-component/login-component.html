@@ -1,0 +1,12 @@
+<h2>Hi there! Tell me your password....</h2>
+<div class="col-center">
+    <div class="col form">
+        <input type="text" [(ngModel)]="username" class="field">
+        <input type="password" [(ngModel)]="password" class="field">
+        <div class="row g6">
+            <button class="submit-btn" (click)="onSubmitPressed()">Login</button>
+            <button class="submit-btn" (click)="onRedirectPressed()">Don't have an account</button>
+        </div>
+
+    </div>
+</div>

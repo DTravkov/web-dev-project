@@ -1,0 +1,35 @@
+<div class="main-div col">
+    <h2 class="discipline-name">{{discipline()?.name + " " + this.comments().length}}</h2>
+    <div class="form-div">
+        <textarea rows="5" [(ngModel)]="currentComment" class="comment-form"></textarea>
+        <div class="row-center-space-between w100">
+            <div class="row">
+                <p>Your rating (from 1 to 5) : </p>
+                <input type="number" min="1" max="5" [(ngModel)]="currentRating">
+            </div>
+            <button class="comment-btn" (click)="onCommentSubmit()">
+                <p>Отправить</p>
+            </button>
+        </div>
+    </div>
+    <div class="comments-div">
+        @for(comment of comments(); track $index){
+        <div class="comment col">
+            <div class="row-center-space-between m4">
+                <p>{{comment.author.username}}</p>
+                <p>{{comment.created_at.slice(0,10)}}</p>
+
+            </div>
+            <hr>
+            <div class="row m8">
+                <p>{{comment.content}}</p>
+            </div>
+        </div>
+        }
+    </div>
+
+
+
+
+
+</div>
