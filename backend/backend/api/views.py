@@ -1,8 +1,10 @@
 
-from rest_framework import viewsets, status
+from django.db import transaction
+from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import permissions, generics
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny, IsAuthenticated
+
 
 from .serializers import CommentSerializer, DisciplineSerializer, PendingDisciplineSerializer
 from .models import Discipline, Comment, PendingDiscipline
@@ -10,9 +12,10 @@ from .permissions import IsCommentOwner
 
 
 
+class NoUpdateModelViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin):
+    pass
 
-
-class PendingDisciplineViewSet(viewsets.ModelViewSet):
+class PendingDisciplineViewSet(NoUpdateModelViewSet):
     queryset = PendingDiscipline.objects.all()
     serializer_class = PendingDisciplineSerializer
     def get_serializer(self, *args, **kwargs):
@@ -21,18 +24,17 @@ class PendingDisciplineViewSet(viewsets.ModelViewSet):
         return super().get_serializer(*args, **kwargs)
     def get_permissions(self):
         if self.action == 'create':
-            return [permissions.IsAuthenticated()]
-        return [permissions.IsAdminUser()]
+            return [IsAuthenticated()]
+        return [IsAdminUser()]
 
     @action(methods=['POST'], detail=True)
     def approve(self, request, pk):
         record = self.get_object()
         record_data = PendingDisciplineSerializer(record).data
         record_data.pop('id', None)
-
-        Discipline.objects.create(**record_data, approved_by=request.user)
-        
-        record.delete()
+        with transaction.atomic():
+            Discipline.objects.create(**record_data, approved_by=request.user)
+            record.delete()
 
         return Response({"detail" : "Successfully approved"},status=status.HTTP_201_CREATED)
 
@@ -41,35 +43,25 @@ class DisciplineViewSet(viewsets.ModelViewSet):
     serializer_class = DisciplineSerializer
 
     def get_permissions(self):
-
         if self.action in ['list', 'retrieve']:
-            return [permissions.AllowAny()]
-        return [permissions.IsAdminUser()]
+            return [AllowAny()]
+        return [IsAdminUser()]
     
     def perform_create(self, serializer):
         return serializer.save(approved_by=self.request.user)
     
 
-class CommentViewSet(viewsets.ModelViewSet):
+class CommentViewSet(NoUpdateModelViewSet):
     queryset = Comment.objects.select_related('author', 'discipline').all()
     serializer_class = CommentSerializer
 
     def get_permissions(self):
-        if self.request.user.is_staff :
-            return [permissions.IsAdminUser()]
+        if self.request.user.is_staff:
+            return [IsAdminUser()]
         if self.action in ['list', 'retrieve']:
-            return [permissions.AllowAny()]
-        return [permissions.IsAuthenticated(),IsCommentOwner()]
+            return [AllowAny()]
+        return [IsAuthenticated(),IsCommentOwner()]
 
-    def update(self, request, *args, **kwargs):
-        return Response(
-            {"detail": "Comments cannot be edited"}, 
-            status=status.HTTP_405_METHOD_NOT_ALLOWED
-        )
-
-    def partial_update(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-    
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
     

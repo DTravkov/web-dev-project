@@ -1,6 +1,10 @@
 
+from django.contrib.auth.models import User
 from rest_framework import serializers, status
+
 from .models import PendingDiscipline, Discipline, Comment
+
+
 
 class PendingDisciplineSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,6 +33,12 @@ class DisciplineSerializer(serializers.ModelSerializer):
         model = Discipline
         fields = ('id','name', 'created_at','approved_by', 'comments')
         read_only_fields = ['approved_by']
+
+class ApprovedDisciplineSerializer(serializers.Serializer):
+       class Meta:
+        model = Discipline
+        fields = ('id','name', 'created_at','approved_by', 'comments')
+        read_only_fields = ['id','name', 'created_at','approved_by', 'comments']
     
 
 
