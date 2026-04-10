@@ -9,4 +9,5 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'signup', component: SignupComponent },
     { path: 'disciplines/:id', component: DisciplineComponent },
+    { path: '**', redirectTo: '' },
 ];

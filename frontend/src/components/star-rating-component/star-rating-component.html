@@ -1,0 +1,10 @@
+<div class="row icon-div">
+    @for(i of starArray();track i) {
+    @if(+i <= this.clickedCount()){ <img src="/assets/filled_star.png" class="star-icon" alt="filled_star"
+        (click)="onClicked(i)">
+        }
+        @else{
+        <img src="/assets/empty_star.png" class="star-icon" alt="empty_star" (click)="onClicked(i)">
+        }
+        }
+</div>

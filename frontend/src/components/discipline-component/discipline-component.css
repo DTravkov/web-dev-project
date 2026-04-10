@@ -3,7 +3,7 @@ textarea {
 }
 
 hr {
-    margin: 12px;
+    margin: 2px;
 }
 
 .comment-form {
@@ -26,6 +26,8 @@ hr {
     width: 100%;
     max-width: 600px;
     border-radius: 8px;
+
+    user-select: none;
 }
 
 .main-div {

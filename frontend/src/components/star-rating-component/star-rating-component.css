@@ -1,0 +1,16 @@
+.icon-div {
+    gap: 3px;
+}
+
+.star-icon {
+    width: 24px;
+    height: 24px;
+    aspect-ratio: 1/1;
+}
+
+.star-icon:hover {
+    will-change: transform;
+    cursor: pointer;
+    transform: scale(1.35);
+    transition: transform 0.2s;
+}

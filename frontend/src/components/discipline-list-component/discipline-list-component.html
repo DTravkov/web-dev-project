@@ -5,6 +5,12 @@
         <app-button-component [id]="btn.id" [action]="btn.name"
             (clickedEvent)="onButtonClicked($event)"></app-button-component>
         }
+
+        @if(buttons().length === 0){
+        <div class="col-center m32">
+            <h2>No disciplines available yet.</h2>
+        </div>
+        }
     </div>
 
 

@@ -5,10 +5,11 @@ import { ActivatedRoute } from '@angular/router';
 import { IDiscipline } from '../../model/i-discipline';
 import { FormsModule } from '@angular/forms';
 import { timer } from 'rxjs';
+import { StarRatingComponent } from '../star-rating-component/star-rating-component';
 
 @Component({
   selector: 'app-discipline-component',
-  imports: [FormsModule],
+  imports: [FormsModule, StarRatingComponent],
   templateUrl: './discipline-component.html',
   styleUrl: './discipline-component.css',
 })
@@ -26,7 +27,6 @@ export class DisciplineComponent implements OnInit {
   currentRating = signal<number>(0);
 
   errorMsg = signal<string | null>(null);
-  errorTimer = timer(3000);
 
   ngOnInit(): void {
 
@@ -45,15 +45,13 @@ export class DisciplineComponent implements OnInit {
   }
 
   onCommentSubmit() {
-    if (this.currentComment().trim() === "" || this.currentComment().length < 5) {
+    if (this.currentComment().trim() === "" || this.currentComment().length < 3) {
       console.error("The comment is too short.");
       this.errorMsg.set("The comment is too short.");
-      this.errorTimer.subscribe(() => this.errorMsg.set(""));
       return;
     }
-    if (this.currentRating() <= 0 || this.currentRating() >= 5) {
+    if (this.currentRating() <= 0 || this.currentRating() > 5) {
       this.errorMsg.set("The rating must be in range (1-5).");
-      this.errorTimer.subscribe(() => this.errorMsg.set(""));
       return;
     }
     this.api.postComment(this.discipline()!.id, this.currentComment(), this.currentRating()).subscribe({
@@ -76,6 +74,15 @@ export class DisciplineComponent implements OnInit {
         console.log(err);
       }
     })
+  }
+
+  onRatingChanged(value: number) {
+    this.clearErrorMsg();
+    this.currentRating.set(value);
+  }
+
+  clearErrorMsg() {
+    this.errorMsg.set(null)
   }
 
 
