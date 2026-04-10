@@ -24,3 +24,4 @@ class Comment(models.Model):
     discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE, related_name='comments')
     def __str__(self):
         return f"{self.author.get_username()}, {self.discipline.name} : {self.content[:30]}"
+    

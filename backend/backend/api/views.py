@@ -6,8 +6,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework import filters
+from django.contrib.auth.models import User
 
-from .serializers import CommentSerializer, DisciplineSerializer, PendingDisciplineSerializer
+from .serializers import CommentSerializer, DisciplineSerializer, PendingDisciplineSerializer, UserSerializer
 from .models import Discipline, Comment, PendingDiscipline
 from .permissions import IsCommentOwner
 
@@ -102,6 +103,29 @@ class CommentViewSet(NoUpdateModelViewSet):
             comment.dislikes.add(user)
             comment.likes.remove(user)
         
+        return Response(status = status.HTTP_200_OK)
+    
+class UserViewSet(viewsets.GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    @action(detail=True, methods=['post'], permission_classes = [IsAdminUser])
+    def ban(self,request):
+        user = self.get_object()
+
+        if user == request.user:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+        user.is_active = False
+        user.save()
+
+        return Response(status = status.HTTP_200_OK)
+    
+    @action(detail=True,methods=['post'], permission_classes = [IsAdminUser])
+    def unban(self,request):
+        user = self.get_object()
+        user.is_active = True
+        user.save()
         return Response(status = status.HTTP_200_OK)
         
 
