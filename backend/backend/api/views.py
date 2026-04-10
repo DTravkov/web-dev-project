@@ -110,7 +110,7 @@ class UserViewSet(viewsets.GenericViewSet):
     serializer_class = UserSerializer
 
     @action(detail=True, methods=['post'], permission_classes = [IsAdminUser])
-    def ban(self,request):
+    def ban(self,request, pk = None):
         user = self.get_object()
 
         if user == request.user:
@@ -122,7 +122,7 @@ class UserViewSet(viewsets.GenericViewSet):
         return Response(status = status.HTTP_200_OK)
     
     @action(detail=True,methods=['post'], permission_classes = [IsAdminUser])
-    def unban(self,request):
+    def unban(self,request, pk = None):
         user = self.get_object()
         user.is_active = True
         user.save()
