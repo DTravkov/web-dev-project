@@ -105,28 +105,33 @@ class CommentViewSet(NoUpdateModelViewSet):
         
         return Response(status = status.HTTP_200_OK)
     
-class UserViewSet(viewsets.GenericViewSet):
+class UserViewSet(NoUpdateModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    def get_permissions(self):
+        if self.action in ['list','retrieve']:
+            return [AllowAny()]
+        return [IsAdminUser()]
 
     @action(detail=True, methods=['post'], permission_classes = [IsAdminUser])
     def ban(self,request, pk = None):
         user = self.get_object()
 
         if user == request.user:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail" : f"can not to ban yourself" },status=status.HTTP_200_OK)
         
         user.is_active = False
         user.save()
 
-        return Response(status = status.HTTP_200_OK)
+        return Response({"detail" : f"user {user.username}, id : {user.id} banned"},status=status.HTTP_200_OK)
     
     @action(detail=True,methods=['post'], permission_classes = [IsAdminUser])
     def unban(self,request, pk = None):
         user = self.get_object()
         user.is_active = True
         user.save()
-        return Response(status = status.HTTP_200_OK)
+        return Response({"detail" : f"user {user.username}, id : {user.id} banned"},status = status.HTTP_200_OK)
         
 
 
