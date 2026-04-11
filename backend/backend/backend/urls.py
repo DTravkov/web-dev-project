@@ -15,9 +15,12 @@ from rest_framework_simplejwt.views import (
 
 from api.urls import api_router
 from authjwt.urls import auth_router
+from api.views import is_moderator
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+
+    path('api/is-moderator/', is_moderator, name='is-moderator'),
 
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),

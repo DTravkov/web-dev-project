@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, OnInit, signal } from '@angular/core';
 import { IToken } from '../model/i-token';
-import { tap } from 'rxjs';
+import { lastValueFrom, switchMap, tap } from 'rxjs';
 import { ApiService } from './api-service';
 import { Router } from '@angular/router';
 
@@ -11,6 +11,8 @@ import { Router } from '@angular/router';
 export class AuthService {
   private http = inject(HttpClient);
   private api = inject(ApiService);
+  private router = inject(Router);
+
 
   postLogin(username: string, password: string) {
     return this.http.post<IToken>('http://127.0.0.1:80/api/token/', { username: username, password: password }, { headers: { "Content-Type": "application/json" } })
@@ -34,13 +36,16 @@ export class AuthService {
       );
   }
 
+
   logout() {
     localStorage.removeItem('access');
+    if (localStorage.getItem('refresh')) this.api.postBlacklist(localStorage.getItem('refresh')!).subscribe();
     localStorage.removeItem('refresh');
+    this.deleteIsModerator();
+    this.router.navigate(['']);
   }
 
 
-  // ! may be wrong with types here
   getToken(): string | null | undefined {
     return localStorage.getItem('access');
 
@@ -49,6 +54,22 @@ export class AuthService {
   setToken(access: string, refresh: string) {
     localStorage.setItem('access', access);
     localStorage.setItem('refresh', refresh);
+    this.deleteIsModerator();
+  }
+
+  isModerator() {
+    const isModer = localStorage.getItem('ismoderator');
+    if (!isModer) this.api.getIsModerator().subscribe(
+      {
+        next(value) { localStorage.setItem('ismoderator', "yes") },
+        error(err) { localStorage.setItem('ismoderator', "no") },
+      }
+    );
+    return isModer === "yes"
+  }
+
+  deleteIsModerator() {
+    localStorage.removeItem('ismoderator');
   }
 
   isLoggedIn() {
@@ -56,5 +77,6 @@ export class AuthService {
     if (token) return true;
     return false;
   }
+
 
 }

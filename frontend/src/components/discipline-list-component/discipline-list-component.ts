@@ -11,18 +11,13 @@ import { Router } from '@angular/router';
   templateUrl: './discipline-list-component.html',
   styleUrl: './discipline-list-component.css',
 })
-export class DisciplineListComponent implements OnInit {
+export class DisciplineListComponent {
   private api = inject(ApiService);
   private disciplineMap = this.api.getDisciplineMap();
   private router = inject(Router);
   buttons = computed(() => {
-    console.log(this.disciplineMap());
     return Object.values(this.disciplineMap())
   });
-
-  ngOnInit(): void {
-    this.disciplineMap = this.api.getDisciplineMap();
-  }
 
   onButtonClicked(id: number) {
     const trueId = this.disciplineMap()[id].id;

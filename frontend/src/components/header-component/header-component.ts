@@ -1,15 +1,17 @@
-import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
+import { ApiService } from '../../services/api-service';
 
 @Component({
   selector: 'app-header-component',
-  imports: [],
+  imports: [RouterLinkActive, RouterLink],
   templateUrl: './header-component.html',
   styleUrl: './header-component.css',
 })
 export class HeaderComponent {
   private router = inject(Router);
+  private api = inject(ApiService);
   auth = inject(AuthService);
 
   onSignupClicked() {
@@ -23,5 +25,11 @@ export class HeaderComponent {
   }
   onLogoutClicked() {
     this.auth.logout();
+  }
+  onOfferDisciplineClicked() {
+    this.router.navigate(['/disciplines', 'offer']);
+  }
+  onApproveListClicked() {
+    this.router.navigate(['/disciplines', 'approve-list']);
   }
 }

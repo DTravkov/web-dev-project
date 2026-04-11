@@ -1,0 +1,16 @@
+<div class="main-div col">
+    <div class="form-div">
+        <textarea rows="5" [(ngModel)]="currentComment" (ngModelChange)="clearErrorMsg()"
+            class="comment-form"></textarea>
+        <div class="row-center-space-between w100">
+            <div>
+                @if(errorMsg()){
+                <p class="error-msg">{{errorMsg()}}</p>
+                }
+            </div>
+
+            <button class="comment-btn" (click)="onSubmitClicked()">
+                <p>Отправить</p>
+            </button>
+        </div>
+    </div>

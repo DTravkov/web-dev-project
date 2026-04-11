@@ -5,7 +5,8 @@
                 <p>Logo</p>
             </strong>
         </div>
-        <div class="header-btn" (click)="onLogoClicked()">
+        <div class="header-btn" (click)="onLogoClicked()" routerLink="/disciplines" routerLinkActive="header-btn-picked"
+            [routerLinkActiveOptions]="{exact : true}">
             <strong>
                 <p>Discipline List</p>
             </strong>
@@ -13,19 +14,35 @@
     </div>
     <div class="row-center-baseline">
         @if(!this.auth.isLoggedIn()){
-        <div class="header-btn" (click)="onSignupClicked()">
+        <div class="header-btn" (click)="onSignupClicked()" routerLink="/signup" routerLinkActive="header-btn-picked">
             <strong>
                 <p>Sign up</p>
             </strong>
         </div>
-
-        <div class="header-btn" (click)="onLoginClicked()">
+        <div class="header-btn" (click)="onLoginClicked()" routerLink="/login" routerLinkActive="header-btn-picked">
             <strong>
                 <p>Log in</p>
             </strong>
         </div>
         }
         @else{
+        @if(this.auth.isModerator()){
+        <div class="header-btn" (click)="onApproveListClicked()" routerLink="/disciplines/approve-list"
+            routerLinkActive="header-btn-picked">
+            <strong>
+                <p>Approve List</p>
+            </strong>
+        </div>
+        }
+
+
+
+        <div class="header-btn" (click)="onOfferDisciplineClicked()" routerLink="/disciplines/offer"
+            routerLinkActive="header-btn-picked">
+            <strong>
+                <p>Offer a discipline</p>
+            </strong>
+        </div>
         <div class="header-btn" (click)="onLogoutClicked()">
             <strong>
                 <p>Logout</p>

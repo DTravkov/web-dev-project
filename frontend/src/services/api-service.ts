@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { IDiscipline } from '../model/i-discipline';
 import { IComment } from '../model/i-comment';
+import { IPendingDiscipline } from '../model/i-pending-discipline';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +21,7 @@ export class ApiService {
   }
   )
 
+
   getDisciplineList() {
     if (this.disciplineList().length === 0) {
       this.getDisciplines().subscribe({
@@ -35,17 +37,12 @@ export class ApiService {
   }
 
   getDisciplineMap() {
-    if (this.disciplineList().length === 0) {
-      this.getDisciplines().subscribe({
-        next: (list) => {
-          this.disciplineList.set(list);
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      })
-    }
+    this.getDisciplineList();
     return this.disciplineMap;
+  }
+
+  getIsModerator() {
+    return this.http.get('http://127.0.0.1:80/api/is-moderator');
   }
 
   getDisciplines() {
@@ -53,6 +50,10 @@ export class ApiService {
   }
   getDiscipline(id: number) {
     return this.http.get<IDiscipline>('http://127.0.0.1:80/api/disciplines/' + id.toString());
+  }
+
+  getPending() {
+    return this.http.get<IPendingDiscipline[]>('http://127.0.0.1:80/api/pending/');
   }
 
   getCommentsByDisciplineId(id: number) {
@@ -65,6 +66,16 @@ export class ApiService {
 
   postLogout(refresh: string) {
     return this.http.post('http://127.0.0.1:80/api/comments/', { refresh: refresh }, { headers: { "Content-Type": "application/json" } });
+  }
+
+  postPending(name: string) {
+    return this.http.post('http://127.0.0.1:80/api/pending/', { name: name }, { headers: { "Content-Type": "application/json" } });
+  }
+  postBlacklist(refresh: string) {
+    return this.http.post('http://127.0.0.1:80/api/token/blacklist/', { refresh: refresh }, { headers: { "Content-Type": "application/json" } });
+  }
+  approvePending(id: number) {
+    return this.http.post('http://127.0.0.1:80/api/pending/' + id.toString() + "/approve/", { headers: { "Content-Type": "application/json" } });
   }
   setActive(id: number) {
     this.activeDiscipline.set(this.disciplineMap()[id]);

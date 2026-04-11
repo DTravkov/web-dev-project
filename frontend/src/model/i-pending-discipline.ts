@@ -1,4 +1,4 @@
-export interface PendingDiscipline {
+export interface IPendingDiscipline {
     id: number;
     name: string;
 }

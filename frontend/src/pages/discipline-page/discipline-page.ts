@@ -5,15 +5,15 @@ import { ActivatedRoute } from '@angular/router';
 import { IDiscipline } from '../../model/i-discipline';
 import { FormsModule } from '@angular/forms';
 import { timer } from 'rxjs';
-import { StarRatingComponent } from '../star-rating-component/star-rating-component';
+import { StarRatingComponent } from '../../components/star-rating-component/star-rating-component';
 
 @Component({
-  selector: 'app-discipline-component',
+  selector: 'app-discipline-page',
   imports: [FormsModule, StarRatingComponent],
-  templateUrl: './discipline-component.html',
-  styleUrl: './discipline-component.css',
+  templateUrl: './discipline-page.html',
+  styleUrl: './discipline-page.css',
 })
-export class DisciplineComponent implements OnInit {
+export class DisciplinePage implements OnInit {
   private route = inject(ActivatedRoute);
   private api = inject(ApiService);
   private id: number = Number(this.route.snapshot.paramMap.get('id'))!;

@@ -2,12 +2,16 @@ import { Routes } from '@angular/router';
 import { DisciplineListComponent } from '../components/discipline-list-component/discipline-list-component';
 import { LoginComponent } from '../components/login-component/login-component';
 import { SignupComponent } from '../components/signup-component/signup-component';
-import { DisciplineComponent } from '../components/discipline-component/discipline-component';
+import { DisciplinePage } from '../pages/discipline-page/discipline-page';
+import { OfferPage } from '../pages/offer-page/offer-page';
+import { ApproveListPage } from '../pages/approve-list-page/approve-list-page';
 
 export const routes: Routes = [
-    { path: '', component: DisciplineListComponent },
+    { path: 'disciplines', component: DisciplineListComponent },
     { path: 'login', component: LoginComponent },
     { path: 'signup', component: SignupComponent },
-    { path: 'disciplines/:id', component: DisciplineComponent },
-    { path: '**', redirectTo: '' },
+    { path: 'disciplines/approve-list', component: ApproveListPage },
+    { path: 'disciplines/offer', component: OfferPage },
+    { path: 'disciplines/:id', component: DisciplinePage },
+    { path: '**', redirectTo: 'disciplines' },
 ];

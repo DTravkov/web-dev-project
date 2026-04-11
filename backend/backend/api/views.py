@@ -1,15 +1,20 @@
 
 from django.db import transaction
 from rest_framework import mixins, viewsets, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny, IsAuthenticated
-
 
 from .serializers import CommentSerializer, DisciplineSerializer, PendingDisciplineSerializer
 from .models import Discipline, Comment, PendingDiscipline
 from .permissions import IsCommentOwner
+from .constants import MANAGER
 
+@api_view(http_method_names=['GET'])
+def is_moderator(request):
+    if(request.user.is_superuser or request.user.groups.filter(name='Manager').exists()):
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response(status=status.HTTP_403_FORBIDDEN)
 
 
 class NoUpdateModelViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin):

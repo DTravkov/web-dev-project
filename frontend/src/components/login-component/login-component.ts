@@ -11,15 +11,26 @@ import { AuthService } from '../../services/auth-service';
   styleUrl: './login-component.css',
 })
 export class LoginComponent {
-  username = signal("");
-  password = signal("");
   private api = inject(ApiService);
   private auth = inject(AuthService);
   private router = inject(Router);
+
+  username = signal<string>("");
+  password = signal<string>("");
+  errMessage = signal<string>("");
   onSubmitPressed() {
     this.auth.postLogin(this.username(), this.password()).subscribe(
       {
-        next: (resp) => this.router.navigate([''])
+        next: (resp) => this.router.navigate(['']),
+        error: (err) => {
+          const body: Object | undefined | null = err.error;
+          console.log(err.error);
+          if (!body) {
+            this.errMessage.set("Unknown error");
+            return;
+          }
+          this.errMessage.set(Object.values(body)[0]);
+        }
       }
     );
   }
