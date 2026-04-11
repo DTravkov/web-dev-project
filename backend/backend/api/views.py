@@ -78,13 +78,28 @@ class CommentViewSet(NoUpdateModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
+    
+    @action(methods=['GET'],detail= True)
+    def comment_detail(self,request,pk):
+        try:
+            comment = self.get_object()
+
+            detail = {
+                'id' : comment.id,
+                'likes' : comment.likes.count(),
+                'dislikes' : comment.dislikes.count()
+            }
+            return Response(detail,status = status.HTTP_200_OK)
+        except Comment.DoesNotExist:
+            return Response({'detail' : 'comment not found'}, status= status.HTTP_404_NOT_FOUND)
+
 
     @action(methods=['POST'],detail = True)
     def like(self,request, pk):
         comment = self.get_object()
         user = self.request.user
 
-        if user in comment.likes.all():
+        if comment.likes.filter(id=user.id).exists():
             comment.likes.remove(user)
         else:
             comment.likes.add(user)
@@ -93,11 +108,11 @@ class CommentViewSet(NoUpdateModelViewSet):
         return Response(status=status.HTTP_200_OK)
     
     @action(methods=['POST'],detail = True)
-    def islike(self,request,pk):
+    def dislike(self,request,pk):
         comment = self.get_object()
         user = self.request.user
 
-        if user in comment.dislikes.all():
+        if  comment.dislikes.filter(id=user.id).exists():
             comment.dislikes.remove(user)
         else:
             comment.dislikes.add(user)
