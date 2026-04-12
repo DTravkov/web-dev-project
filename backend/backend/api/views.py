@@ -82,5 +82,35 @@ class CommentViewSet(NoUpdateModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+    @action(methods=['POST'],detail = True)
+    def like(self,request, pk):
+        comment = self.get_object()
+        user = self.request.user
+
+        if user in comment.likes.all():
+            comment.likes.remove(user)
+        else:
+            comment.likes.add(user)
+            comment.dislikes.remove(user)
+        
+        return Response(status=status.HTTP_200_OK)
+    
+    @action(methods=['POST'],detail = True)
+    def islike(self,request,pk):
+        comment = self.get_object()
+        user = self.request.user
+
+        if user in comment.dislikes.all():
+            comment.dislikes.remove(user)
+        else:
+            comment.dislikes.add(user)
+            comment.likes.remove(user)
+        
+        return Response(status = status.HTTP_200_OK)
+        
+
+
     
     
