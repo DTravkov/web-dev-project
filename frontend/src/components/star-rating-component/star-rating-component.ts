@@ -9,7 +9,7 @@ import { Component, computed, input, OnInit, output, signal } from '@angular/cor
 export class StarRatingComponent implements OnInit {
   numberOfStars = input.required<number>();
   starArray = signal<number[]>([]);
-  clickedCount = signal<number>(0);
+  clickedCount = input<number>(0);
   clickedEvent = output<number>();
 
   ngOnInit(): void {
@@ -22,6 +22,5 @@ export class StarRatingComponent implements OnInit {
 
   onClicked(value: number) {
     this.clickedEvent.emit(value);
-    this.clickedCount.set(value);
   }
 }

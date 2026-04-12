@@ -1,17 +1,20 @@
 <div class="outer">
 
     <div class="list">
-        @for(btn of buttons();track btn.name){
-        <app-button-component [id]="btn.id" [action]="btn.name"
-            (clickedEvent)="onButtonClicked($event)"></app-button-component>
-        }
-        
+        <h1 class="list-msg">Pending Disciplines</h1>
+        <div class="list-row">
+            @for(btn of buttons();track btn.name){
+            <app-button-component [id]="btn.id" [action]="btn.name"
+                (clickedEvent)="onButtonClicked($event)"></app-button-component>
+            }
+        </div>
+
         @if(buttons().length === 0){
         <div class="col-center m32">
             <h2>No disciplines available yet.</h2>
         </div>
         }
-        
+
 
     </div>
 

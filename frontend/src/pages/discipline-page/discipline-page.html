@@ -4,7 +4,7 @@
         <textarea rows="5" [(ngModel)]="currentComment" (ngModelChange)="clearErrorMsg()"
             class="comment-form"></textarea>
         <div class="row-center-space-between w100">
-            <app-star-rating-component [numberOfStars]="5"
+            <app-star-rating-component [clickedCount]="this.currentRating()" [numberOfStars]="5"
                 (clickedEvent)="onRatingChanged($event)"></app-star-rating-component>
             @if(errorMsg()){
             <p class="error-msg">{{errorMsg()}}</p>
@@ -21,17 +21,19 @@
             <div class="row-center-space-between m8">
                 <div class="row-center">
                     <p>{{comment.author.username}}</p>
-                    <div class="row-center m8">
-                        <h3>{{comment.rating}}</h3>
+                </div>
+                <div class="row-center">
+                    <p>{{comment.created_at.slice(0,10) + " / " + comment.created_at.slice(11,16)}}</p>
+                    <div class="row-center-baseline m8">
+
                         <img src="/assets/filled_star.png" class="star-icon p4" alt="">
+                        <h3>{{comment.rating}}</h3>
                     </div>
                 </div>
 
-                <p>{{comment.created_at.slice(0,10)}}</p>
-
             </div>
             <hr>
-            <div class="row m8">
+            <div class="row m16">
                 <p>{{comment.content}}</p>
             </div>
         </div>

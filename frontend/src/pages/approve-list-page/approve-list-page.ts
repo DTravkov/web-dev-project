@@ -22,7 +22,9 @@ export class ApproveListPage {
 
   onButtonClicked(id: number) {
     this.api.approvePending(id).subscribe({
-      next: (value) => this.refreshPending()
+      next: (value) => {
+        this.refreshPending();
+      }
     });
   }
 

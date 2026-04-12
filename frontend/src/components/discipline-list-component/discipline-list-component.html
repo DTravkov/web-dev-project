@@ -1,10 +1,13 @@
 <div class="outer">
 
     <div class="list">
-        @for(btn of buttons();track btn.name){
-        <app-button-component [id]="btn.id" [action]="btn.name"
-            (clickedEvent)="onButtonClicked($event)"></app-button-component>
-        }
+        <h1 class="list-msg">List of all Disciplines</h1>
+        <div class="list-row">
+            @for(btn of buttons();track btn.name){
+            <app-button-component [id]="btn.id" [action]="btn.name" (clickedEvent)="onButtonClicked($event)"
+                class="discipline-btn"></app-button-component>
+            }
+        </div>
 
         @if(buttons().length === 0){
         <div class="col-center m32">

@@ -1,8 +1,20 @@
 .list {
     display: flex;
     flex-direction: column;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    max-width: 1300px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
     margin: 0 auto;
+    max-width: 1300px;
+}
+
+.list-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.list-msg {
+    margin: 36px 0px;
 }

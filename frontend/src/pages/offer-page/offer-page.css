@@ -6,6 +6,10 @@ hr {
     margin: 2px;
 }
 
+.offer-msg {
+    margin: 36px 0px
+}
+
 .comment-form {
     text-align: left;
     padding-bottom: 100px;

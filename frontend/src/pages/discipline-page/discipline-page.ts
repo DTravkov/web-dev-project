@@ -1,10 +1,9 @@
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { IComment } from '../../model/i-comment';
 import { ApiService } from '../../services/api-service';
 import { ActivatedRoute } from '@angular/router';
 import { IDiscipline } from '../../model/i-discipline';
 import { FormsModule } from '@angular/forms';
-import { timer } from 'rxjs';
 import { StarRatingComponent } from '../../components/star-rating-component/star-rating-component';
 
 @Component({
@@ -40,7 +39,6 @@ export class DisciplinePage implements OnInit {
         error: (err) => console.log(err)
       });
     }
-
     this.fetchComments();
   }
 
@@ -57,6 +55,8 @@ export class DisciplinePage implements OnInit {
     this.api.postComment(this.discipline()!.id, this.currentComment(), this.currentRating()).subscribe({
       next: (response) => {
         this.fetchComments();
+        this.currentComment.set("");
+        this.currentRating.set(0);
       },
       error: (err) => {
         console.error('Login failed');
@@ -68,7 +68,7 @@ export class DisciplinePage implements OnInit {
     this.api.getCommentsByDisciplineId(this.id).subscribe({
       next: (list) => {
         console.log(list)
-        this.comments.set(list);
+        this.comments.set(list.reverse());
       },
       error: (err) => {
         console.log(err);

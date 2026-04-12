@@ -1,3 +1,31 @@
 * {
     user-select: none;
 }
+
+.signup {
+    background-color: rgb(0, 0, 0);
+    color: white;
+}
+
+.login {
+    background-color: rgb(0, 0, 0);
+    color: white;
+}
+
+.logout {
+    background-color: rgb(255, 57, 57);
+    color: white;
+}
+
+.offer {
+    background-color: rgb(2, 189, 2);
+    color: white;
+}
+
+
+
+
+.v-hr {
+    height: 24px;
+    margin: 0px 3px;
+}

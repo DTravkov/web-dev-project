@@ -24,14 +24,7 @@ export class ApiService {
 
   getDisciplineList() {
     if (this.disciplineList().length === 0) {
-      this.getDisciplines().subscribe({
-        next: (list) => {
-          this.disciplineList.set(list);
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      })
+      this.refreshDisciplines();
     }
     return this.disciplineList;
   }
@@ -41,8 +34,16 @@ export class ApiService {
     return this.disciplineMap;
   }
 
-  getIsModerator() {
-    return this.http.get('http://127.0.0.1:80/api/is-moderator');
+  refreshDisciplines() {
+    this.getDisciplines().subscribe({
+      next: (list) => {
+        this.disciplineList.set(list);
+        console.log(list)
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    })
   }
 
   getDisciplines() {

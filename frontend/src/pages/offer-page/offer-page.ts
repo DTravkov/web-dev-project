@@ -21,6 +21,7 @@ export class OfferPage {
     this.api.postPending(this.currentComment()).subscribe({
       next: (value) => {
         this.errorMsg.set("Sent successfully!");
+        this.currentComment.set("");
       },
       error: (err) => {
         if (err.status === 400) {

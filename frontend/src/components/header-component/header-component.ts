@@ -12,7 +12,10 @@ import { ApiService } from '../../services/api-service';
 export class HeaderComponent {
   private router = inject(Router);
   private api = inject(ApiService);
+
   auth = inject(AuthService);
+
+  isModerator = true;
 
   onSignupClicked() {
     this.router.navigate(['/signup']);
@@ -20,7 +23,8 @@ export class HeaderComponent {
   onLoginClicked() {
     this.router.navigate(['/login']);
   }
-  onLogoClicked() {
+  onDisciplineListClicked() {
+    this.api.refreshDisciplines();
     this.router.navigate(['']);
   }
   onLogoutClicked() {
@@ -32,4 +36,5 @@ export class HeaderComponent {
   onApproveListClicked() {
     this.router.navigate(['/disciplines', 'approve-list']);
   }
+
 }
