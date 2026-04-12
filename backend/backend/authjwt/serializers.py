@@ -2,6 +2,10 @@ from rest_framework import serializers, status
 from django.contrib.auth.models import User
 from django.contrib.auth import password_validation
 from rest_framework.validators import UniqueValidator
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+from .permissions import check_manager_permissions
+
 
 
 class SignupSerializer(serializers.Serializer):
@@ -21,4 +25,11 @@ class SignupSerializer(serializers.Serializer):
     def create(self, validated_data):
         user = User.objects.create_user(username=validated_data['username'],password=validated_data['password'])
         return user
+    
 
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['is_manager'] = check_manager_permissions(user)
+        return token

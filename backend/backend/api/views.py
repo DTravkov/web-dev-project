@@ -12,9 +12,11 @@ from .constants import MANAGER
 
 @api_view(http_method_names=['GET'])
 def is_moderator(request):
-    if(request.user.is_superuser or request.user.groups.filter(name='Manager').exists()):
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    return Response(status=status.HTTP_403_FORBIDDEN)
+    if request.user.is_superuser:
+        return Response({"detail" : "admin"}, status=status.HTTP_200_OK)
+    if request.user.groups.filter(name='Manager').exists():
+        return Response({"detail" : "manager"}, status=status.HTTP_200_OK)
+    return Response({"detail" : "user"}, status=status.HTTP_200_OK)
 
 
 class NoUpdateModelViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin):

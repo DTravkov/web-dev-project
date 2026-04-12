@@ -29,19 +29,5 @@ services:
     depends_on:
       - backend
 
-  # telegram:
-  #   build: ./telegram_bot
-  #   env_file:
-  #     - .env
-  #   expose:
-  #     - 8001
-  #   command: python main.py
-  #   depends_on:
-  #     - nginx
-
-  test:
-    build: ./test
-    depends_on:
-      - backend
 volumes:
   postgres_data:
