@@ -1,5 +1,6 @@
 
 from django.db import transaction
+from django.db.models import Count
 from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
@@ -49,7 +50,9 @@ class PendingDisciplineViewSet(NoUpdateModelViewSet):
         return Response({"detail" : "Successfully approved"},status=status.HTTP_201_CREATED)
 
 class DisciplineViewSet(viewsets.ModelViewSet):
-    queryset = Discipline.objects.prefetch_related('comments__author').all()
+    queryset = Discipline.objects.annotate(
+        comments_count=Count('comments')
+    ).prefetch_related('comments__author').all()
 
     def get_serializer_class(self):
         if self.action == 'comments':
@@ -67,7 +70,9 @@ class DisciplineViewSet(viewsets.ModelViewSet):
     
     @action(methods=['GET'], detail=True)
     def comments(self, request, pk):
-        serializer = self.get_serializer(Comment.objects.filter(discipline__id=pk), many=True)
+        discipline = self.get_object()
+        comments = discipline.comments.annotate(likes_count=Count('likes'),dislikes_count=Count('dislikes')).all()
+        serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class CommentViewSet(NoUpdateModelViewSet):
@@ -79,7 +84,7 @@ class CommentViewSet(NoUpdateModelViewSet):
             return [IsAdminUser()]
         if self.action in ['list', 'retrieve']:
             return [AllowAny()]
-        if self.action == 'create':
+        if self.action in ['create', 'like', 'dislike']:
             return [IsAuthenticated()]
         return [IsAuthenticated(),IsCommentOwner()]
 

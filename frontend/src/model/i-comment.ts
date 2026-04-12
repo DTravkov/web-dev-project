@@ -8,4 +8,6 @@ export interface IComment {
     created_at: string;
     author: IUser;
     discipline: number | IDiscipline;
+    likes_count: number;
+    dislikes_count: number;
 }
