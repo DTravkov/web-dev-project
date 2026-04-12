@@ -4,8 +4,11 @@ from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny, IsAuthenticated
+from django.shortcuts import get_object_or_404
+from rest_framework import filters
+from django.contrib.auth.models import User
 
-from .serializers import CommentSerializer, DisciplineSerializer, PendingDisciplineSerializer
+from .serializers import CommentSerializer, DisciplineSerializer, PendingDisciplineSerializer, UserSerializer
 from .models import Discipline, Comment, PendingDiscipline
 from .permissions import IsCommentOwner
 from .constants import MANAGER
@@ -82,5 +85,78 @@ class CommentViewSet(NoUpdateModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+    
+    @action(methods=['GET'],detail= True)
+    def comment_detail(self,request,pk):
+        try:
+            comment = self.get_object()
+
+            detail = {
+                'id' : comment.id,
+                'likes' : comment.likes.count(),
+                'dislikes' : comment.dislikes.count()
+            }
+            return Response(detail,status = status.HTTP_200_OK)
+        except Comment.DoesNotExist:
+            return Response({'detail' : 'comment not found'}, status= status.HTTP_404_NOT_FOUND)
+
+
+    @action(methods=['POST'],detail = True)
+    def like(self,request, pk):
+        comment = self.get_object()
+        user = self.request.user
+
+        if comment.likes.filter(id=user.id).exists():
+            comment.likes.remove(user)
+        else:
+            comment.likes.add(user)
+            comment.dislikes.remove(user)
+        
+        return Response(status=status.HTTP_200_OK)
+    
+    @action(methods=['POST'],detail = True)
+    def dislike(self,request,pk):
+        comment = self.get_object()
+        user = self.request.user
+
+        if  comment.dislikes.filter(id=user.id).exists():
+            comment.dislikes.remove(user)
+        else:
+            comment.dislikes.add(user)
+            comment.likes.remove(user)
+        
+        return Response(status = status.HTTP_200_OK)
+    
+class UserViewSet(NoUpdateModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def get_permissions(self):
+        if self.action in ['list','retrieve']:
+            return [AllowAny()]
+        return [IsAdminUser()]
+
+    @action(detail=True, methods=['post'], permission_classes = [IsAdminUser])
+    def ban(self,request, pk = None):
+        user = self.get_object()
+
+        if user == request.user:
+            return Response({"detail" : f"can not to ban yourself" },status=status.HTTP_200_OK)
+        
+        user.is_active = False
+        user.save()
+
+        return Response({"detail" : f"user {user.username}, id : {user.id} banned"},status=status.HTTP_200_OK)
+    
+    @action(detail=True,methods=['post'], permission_classes = [IsAdminUser])
+    def unban(self,request, pk = None):
+        user = self.get_object()
+        user.is_active = True
+        user.save()
+        return Response({"detail" : f"user {user.username}, id : {user.id} banned"},status = status.HTTP_200_OK)
+        
+
+
     
     
