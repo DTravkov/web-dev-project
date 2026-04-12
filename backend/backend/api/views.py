@@ -50,9 +50,7 @@ class PendingDisciplineViewSet(NoUpdateModelViewSet):
         return Response({"detail" : "Successfully approved"},status=status.HTTP_201_CREATED)
 
 class DisciplineViewSet(viewsets.ModelViewSet):
-    queryset = Discipline.objects.annotate(
-        comments_count=Count('comments')
-    ).prefetch_related('comments__author').all()
+    queryset = Discipline.objects.select_related('approved_by').annotate(comment_count=Count('comments'))
 
     def get_serializer_class(self):
         if self.action == 'comments':
@@ -71,9 +69,9 @@ class DisciplineViewSet(viewsets.ModelViewSet):
     @action(methods=['GET'], detail=True)
     def comments(self, request, pk):
         discipline = self.get_object()
-        comments = discipline.comments.annotate(
-            likes_count=Count('likes'),
-            dislikes_count=Count('dislikes')).all()
+        comments = discipline.comments.select_related('author').annotate(
+            likes_count=Count('likes' , distinct=True),
+            dislikes_count=Count('dislikes', distinct=True)).all()
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -98,8 +96,8 @@ class CommentViewSet(NoUpdateModelViewSet):
     def comment_detail(self, request, pk):
         try:
             queryset = Comment.objects.annotate(
-                likes_count=Count('likes'),
-                dislikes_count=Count('dislikes')
+                likes_count=Count('likes', distinct=True),
+                dislikes_count=Count('dislikes', distinct=True)
             )
             comment = queryset.get(pk=pk) 
             
@@ -111,29 +109,33 @@ class CommentViewSet(NoUpdateModelViewSet):
 
     @action(methods=['POST'],detail = True)
     def like(self,request, pk):
-        comment = self.get_object()
-        user = self.request.user
+        with transaction.atomic():
+            comment = Comment.objects.get(pk=pk)
+            user = self.request.user
 
-        if comment.likes.filter(id=user.id).exists():
-            comment.likes.remove(user)
-        else:
-            comment.likes.add(user)
-            comment.dislikes.remove(user)
-        
-        return Response(status=status.HTTP_200_OK)
+            if comment.likes.filter(id=user.id).exists():
+                comment.likes.remove(user)
+            else:
+                comment.likes.add(user)
+                comment.dislikes.remove(user)
+            
+            return Response(status=status.HTTP_204_NO_CONTENT)
     
     @action(methods=['POST'],detail = True)
     def dislike(self,request,pk):
-        comment = self.get_object()
-        user = self.request.user
+        with transaction.atomic():
+            comment = Comment.objects.get(pk=pk)
+            user = self.request.user
 
-        if  comment.dislikes.filter(id=user.id).exists():
-            comment.dislikes.remove(user)
-        else:
-            comment.dislikes.add(user)
-            comment.likes.remove(user)
-        
-        return Response(status = status.HTTP_200_OK)
+            if  comment.dislikes.filter(id=user.id).exists():
+                comment.dislikes.remove(user)
+            else:
+                comment.dislikes.add(user)
+                comment.likes.remove(user)
+            
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+    
     
 class UserViewSet(NoUpdateModelViewSet):
     queryset = User.objects.all()

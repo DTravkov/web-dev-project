@@ -87,7 +87,7 @@ export class DisciplinePage implements OnInit {
     this.api.postLikeComment(id).pipe(
       concatMap(() => this.api.getComment(id))
     ).subscribe({
-      next: (updatedComment) => { this.updateCommentsMap(id, updatedComment); console.log(this.commentsMap()[id]) },
+      next: (updatedComment) => { this.updateCommentsMap(id, updatedComment) },
       error(err) { console.log(err) }
     });
   }
@@ -95,7 +95,7 @@ export class DisciplinePage implements OnInit {
     this.api.postDislikeComment(id).pipe(
       concatMap(() => this.api.getComment(id))
     ).subscribe({
-      next: (updatedComment) => this.updateCommentsMap(id, updatedComment),
+      next: (updatedComment) => { console.log(updatedComment.likes_count, updatedComment.dislikes_count); this.updateCommentsMap(id, updatedComment) },
       error(err) { console.log(err) }
     });
   }
