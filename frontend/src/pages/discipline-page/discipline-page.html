@@ -20,15 +20,8 @@
         <div class="comment col">
             <div class="row-center-space-between m8">
                 <div class="row-center">
+                    <img src="/assets/profile-placeholder.jpg" class="profile-picutre" alt="">
                     <p>{{comment.author.username}}</p>
-                </div>
-                <div class="row-center">
-                    <p>{{comment.created_at.slice(0,10) + " / " + comment.created_at.slice(11,16)}}</p>
-                    <div class="row-center-baseline m8">
-
-                        <img src="/assets/filled_star.png" class="star-icon p4" alt="">
-                        <h3>{{comment.rating}}</h3>
-                    </div>
                 </div>
 
             </div>
@@ -36,9 +29,22 @@
             <div class="row m16">
                 <p>{{comment.content}}</p>
             </div>
+            <div class="row-center-space-between">
 
-            <p> LIKES : {{comment.likes_count}}</p>
-            <p> DISLIKES : {{comment.dislikes_count}}</p>
+                <div class="row-center-baseline m8">
+                    <img src="/assets/filled_star.png" class="star-icon p4" alt="">
+                    <h3>{{comment.rating}}</h3>
+                </div>
+                <div class="row-center g16">
+                    <p>{{comment.created_at.slice(0,10) + " / " + comment.created_at.slice(11,16)}}</p>
+                    <div class="row-center g4">
+                        <img src="/assets/like.svg" class="star-icon" alt="">
+                        <p class="m8"> {{comment.likes_count}}</p>
+                        <img src="/assets/dislike.svg" class="star-icon" alt="">
+                        <p class="m8"> {{comment.dislikes_count}}</p>
+                    </div>
+                </div>
+            </div>
         </div>
         }
     </div>

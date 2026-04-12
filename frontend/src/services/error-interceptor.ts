@@ -20,7 +20,6 @@ export const authErrorInterceptor: HttpInterceptorFn = (req, next) => {
                                 Authorization: `Bearer ${localStorage.getItem('access')}`
                             }
                         });
-
                         return next(newRequest);
                     }),
                     catchError((err) => {

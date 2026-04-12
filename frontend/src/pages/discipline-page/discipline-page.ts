@@ -28,7 +28,6 @@ export class DisciplinePage implements OnInit {
   errorMsg = signal<string | null>(null);
 
   ngOnInit(): void {
-
     const disciplineFromMap = this.api.getDisciplineMap()()[this.id];
     if (disciplineFromMap) this.discipline.set(disciplineFromMap);
     else {
@@ -84,6 +83,5 @@ export class DisciplinePage implements OnInit {
   clearErrorMsg() {
     this.errorMsg.set(null)
   }
-
 
 }

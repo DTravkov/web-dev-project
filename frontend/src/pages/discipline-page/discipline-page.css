@@ -62,7 +62,14 @@ hr {
     width: 100%;
     background-color: rgb(241, 241, 241);
     border-radius: 4px;
-    padding: 0px 12px;
-    margin: 8px 0px;
+    padding: 12px 16px;
+    margin: 12px 0px;
     gap: 4px 0px;
+}
+
+.profile-picutre {
+    border-radius: 100%;
+    aspect-ratio: 1/1;
+    width: 36px;
+    margin-right: 16px;
 }

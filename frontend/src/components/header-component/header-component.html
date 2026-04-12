@@ -1,56 +1,56 @@
-<div class="header row-center-space-between">
-    <div class="row-center-baseline g8">
-        <div class="header-btn" (click)="onDisciplineListClicked()">
-            <strong>
-                <p>Logo</p>
-            </strong>
+<div class="screen-centered black-bottom-border">
+    <div class="header row-center-space-between">
+        <div class="row-center-baseline g8">
+            <div class="header-btn" (click)="onDisciplineListClicked()">
+                <strong>
+                    <p>Logo</p>
+                </strong>
+            </div>
+            <div class="header-btn" (click)="onDisciplineListClicked()" routerLink="/disciplines"
+                routerLinkActive="header-btn-picked" [routerLinkActiveOptions]="{exact : true}">
+                <strong>
+                    <p>Discipline List</p>
+                </strong>
+            </div>
         </div>
-        <div class="header-btn" (click)="onDisciplineListClicked()" routerLink="/disciplines"
-            routerLinkActive="header-btn-picked" [routerLinkActiveOptions]="{exact : true}">
-            <strong>
-                <p>Discipline List</p>
-            </strong>
+        <div class="row-center-baseline g8">
+            @if(!this.auth.isLoggedIn()){
+            <div class="header-btn" (click)="onSignupClicked()" routerLink="/signup"
+                routerLinkActive="header-btn-picked">
+                <strong>
+                    <p>Sign up</p>
+                </strong>
+            </div>
+            <div class="header-btn" (click)="onLoginClicked()" routerLink="/login" routerLinkActive="header-btn-picked">
+                <strong>
+                    <p>Log in</p>
+                </strong>
+            </div>
+            }
+            @else{
+            @if(userCanApprove()){
+            <div class="header-btn" (click)="onApproveListClicked()" routerLink="/disciplines/approve-list"
+                routerLinkActive="header-btn-picked">
+                <strong>
+                    <p>Approve List</p>
+                </strong>
+            </div>
+            }
+            <div class="header-btn offer" (click)="onOfferDisciplineClicked()" routerLink="/disciplines/offer"
+                routerLinkActive="header-btn-picked">
+                <strong>
+                    <p>Offer new discipline</p>
+                </strong>
+            </div>
+            <hr class="v-hr">
+            <div class="header-btn logout" (click)="onLogoutClicked()">
+                <strong>
+                    <p>Logout</p>
+                </strong>
+            </div>
+            }
+
         </div>
+
     </div>
-    <div class="row-center-baseline g8">
-        @if(!this.auth.isLoggedIn()){
-        <div class="header-btn" (click)="onSignupClicked()" routerLink="/signup" routerLinkActive="header-btn-picked">
-            <strong>
-                <p>Sign up</p>
-            </strong>
-        </div>
-        <div class="header-btn" (click)="onLoginClicked()" routerLink="/login" routerLinkActive="header-btn-picked">
-            <strong>
-                <p>Log in</p>
-            </strong>
-        </div>
-        }
-        @else{
-        @if(this.isModerator){
-        <div class="header-btn" (click)="onApproveListClicked()" routerLink="/disciplines/approve-list"
-            routerLinkActive="header-btn-picked">
-            <strong>
-                <p>Approve List</p>
-            </strong>
-        </div>
-        }
-
-
-
-        <div class="header-btn offer" (click)="onOfferDisciplineClicked()" routerLink="/disciplines/offer"
-            routerLinkActive="header-btn-picked">
-            <strong>
-                <p>Offer new discipline</p>
-            </strong>
-        </div>
-        <hr class="v-hr">
-        <div class="header-btn logout" (click)="onLogoutClicked()">
-            <strong>
-                <p>Logout</p>
-            </strong>
-        </div>
-        }
-
-    </div>
-
 </div>

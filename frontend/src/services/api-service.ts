@@ -38,7 +38,6 @@ export class ApiService {
     this.getDisciplines().subscribe({
       next: (list) => {
         this.disciplineList.set(list);
-        console.log(list)
       },
       error: (err) => {
         console.log(err);
