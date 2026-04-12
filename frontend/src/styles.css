@@ -123,6 +123,18 @@ body {
     aspect-ratio: 1/1;
 }
 
+.like-dislike-btn {
+    width: 40px;
+    height: 40px;
+    padding: 2px;
+    aspect-ratio: 1/1;
+    border-style: solid;
+    border-radius: 6px;
+    border-color: rgba(0, 0, 0, 0.428);
+    border-width: 1px;
+    user-select: none;
+}
+
 .screen-centered {
     display: flex;
     flex-direction: column;

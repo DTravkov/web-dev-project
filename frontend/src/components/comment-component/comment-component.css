@@ -1,0 +1,75 @@
+textarea {
+    resize: none;
+}
+
+hr {
+    margin: 2px;
+}
+
+.comment-form {
+    text-align: left;
+    padding-bottom: 100px;
+    width: 100%;
+}
+
+.comment-btn {
+    padding: 8px 12px;
+    margin: 8px 0px;
+    width: 100px;
+    text-align: center;
+}
+
+.form-div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 100%;
+    max-width: 800px;
+    border-radius: 8px;
+
+    user-select: none;
+}
+
+.main-div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.discipline-name {
+    margin: 44px 0px;
+}
+
+.w100 {
+    width: 100%;
+}
+
+
+.comments-div {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    border-radius: 4px;
+    margin: 8px;
+    height: 300px;
+}
+
+.comment {
+    width: 100%;
+    background-color: rgb(241, 241, 241);
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin: 12px 0px;
+    gap: 4px 0px;
+}
+
+.profile-picutre {
+    border-radius: 100%;
+    aspect-ratio: 1/1;
+    width: 36px;
+    margin-right: 16px;
+}

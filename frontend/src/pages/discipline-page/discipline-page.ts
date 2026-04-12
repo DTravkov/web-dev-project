@@ -1,14 +1,16 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { IComment } from '../../model/i-comment';
 import { ApiService } from '../../services/api-service';
 import { ActivatedRoute } from '@angular/router';
 import { IDiscipline } from '../../model/i-discipline';
 import { FormsModule } from '@angular/forms';
 import { StarRatingComponent } from '../../components/star-rating-component/star-rating-component';
+import { CommentComponent } from '../../components/comment-component/comment-component';
+import { concatMap, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-discipline-page',
-  imports: [FormsModule, StarRatingComponent],
+  imports: [FormsModule, StarRatingComponent, CommentComponent],
   templateUrl: './discipline-page.html',
   styleUrl: './discipline-page.css',
 })
@@ -19,7 +21,8 @@ export class DisciplinePage implements OnInit {
 
 
   discipline = signal<IDiscipline | null>(null);
-  comments = signal<IComment[]>([]);
+  commentsMap = signal<Record<number, IComment>>({});
+  commentsArr = computed(() => Object.values(this.commentsMap()))
 
 
   currentComment = signal<string>("");
@@ -62,17 +65,39 @@ export class DisciplinePage implements OnInit {
       },
     });
   }
-
   fetchComments() {
     this.api.getCommentsByDisciplineId(this.id).subscribe({
-      next: (list) => {
-        console.log(list)
-        this.comments.set(list.reverse());
+      next: (arr) => {
+        arr = arr.reverse();
+        const map: Record<string, IComment> = {};
+        for (let i = 0; i < arr.length; i++) {
+          if (map[arr[i].id]) continue;
+          map[arr[i].id] = arr[i];
+        }
+        this.commentsMap.set(map);
       },
       error: (err) => {
         console.log(err);
       }
     })
+  }
+
+
+  onLikeClicked(id: number) {
+    this.api.postLikeComment(id).pipe(
+      concatMap(() => this.api.getComment(id))
+    ).subscribe({
+      next: (updatedComment) => { this.updateCommentsMap(id, updatedComment); console.log(this.commentsMap()[id]) },
+      error(err) { console.log(err) }
+    });
+  }
+  onDislikeClicked(id: number) {
+    this.api.postDislikeComment(id).pipe(
+      concatMap(() => this.api.getComment(id))
+    ).subscribe({
+      next: (updatedComment) => this.updateCommentsMap(id, updatedComment),
+      error(err) { console.log(err) }
+    });
   }
 
   onRatingChanged(value: number) {
@@ -82,6 +107,15 @@ export class DisciplinePage implements OnInit {
 
   clearErrorMsg() {
     this.errorMsg.set(null)
+  }
+
+  updateCommentsMap(id: number, comment: IComment) {
+    this.commentsMap.update(map => {
+      return {
+        ...map,
+        [id]: comment
+      };
+    })
   }
 
 }

@@ -71,7 +71,9 @@ class DisciplineViewSet(viewsets.ModelViewSet):
     @action(methods=['GET'], detail=True)
     def comments(self, request, pk):
         discipline = self.get_object()
-        comments = discipline.comments.annotate(likes_count=Count('likes'),dislikes_count=Count('dislikes')).all()
+        comments = discipline.comments.annotate(
+            likes_count=Count('likes'),
+            dislikes_count=Count('dislikes')).all()
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -82,7 +84,7 @@ class CommentViewSet(NoUpdateModelViewSet):
     def get_permissions(self):
         if self.request.user.is_staff:
             return [IsAdminUser()]
-        if self.action in ['list', 'retrieve']:
+        if self.action in ['list', 'retrieve', 'comment_detail']:
             return [AllowAny()]
         if self.action in ['create', 'like', 'dislike']:
             return [IsAuthenticated()]
@@ -92,19 +94,19 @@ class CommentViewSet(NoUpdateModelViewSet):
         serializer.save(author=self.request.user)
 
     
-    @action(methods=['GET'],detail= True)
-    def comment_detail(self,request,pk):
+    @action(methods=['GET'], detail=True)
+    def comment_detail(self, request, pk):
         try:
-            comment = self.get_object()
-
-            detail = {
-                'id' : comment.id,
-                'likes' : comment.likes.count(),
-                'dislikes' : comment.dislikes.count()
-            }
-            return Response(detail,status = status.HTTP_200_OK)
+            queryset = Comment.objects.annotate(
+                likes_count=Count('likes'),
+                dislikes_count=Count('dislikes')
+            )
+            comment = queryset.get(pk=pk) 
+            
+            serializer = self.get_serializer(comment)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Comment.DoesNotExist:
-            return Response({'detail' : 'comment not found'}, status= status.HTTP_404_NOT_FOUND)
+            return Response({'detail': 'Comment not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
     @action(methods=['POST'],detail = True)

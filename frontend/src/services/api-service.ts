@@ -60,8 +60,18 @@ export class ApiService {
     return this.http.get<IComment[]>('http://127.0.0.1:80/api/disciplines/' + id.toString() + "/comments/");
   }
 
+  getComment(id: number) {
+    return this.http.get<IComment>('http://127.0.0.1:80/api/comments/' + id.toString() + "/comment_detail/", { headers: { "Content-Type": "application/json" } });
+  }
+
   postComment(id: number, content: string, rating: number) {
     return this.http.post('http://127.0.0.1:80/api/comments/', { discipline: id, content: content, rating: rating }, { headers: { "Content-Type": "application/json" } });
+  }
+  postLikeComment(id: number) {
+    return this.http.post('http://127.0.0.1:80/api/comments/' + id.toString() + "/like/", { discipline: id, }, { headers: { "Content-Type": "application/json" } });
+  }
+  postDislikeComment(id: number) {
+    return this.http.post('http://127.0.0.1:80/api/comments/' + id.toString() + "/dislike/", { discipline: id, }, { headers: { "Content-Type": "application/json" } });
   }
 
   postLogout(refresh: string) {
