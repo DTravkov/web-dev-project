@@ -105,25 +105,6 @@ class CommentViewSet(NoUpdateModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    
-    @action(methods=['GET'], detail=True)
-    def comment_detail(self, request, pk):
-        try:
-            comment_cache = f'comment:{pk}'
-            comment = cache.get(comment_cache)
-            if comment is not None:
-                serializer = self.get_serializer(comment)
-            else:
-                queryset = Comment.objects.annotate(
-                likes_count=Count('likes', distinct=True),
-                dislikes_count=Count('dislikes', distinct=True)
-            )
-                comment = queryset.get(pk=pk)                
-                serializer = self.get_serializer(comment)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Comment.DoesNotExist:
-            return Response({'detail': 'Comment not found'}, status=status.HTTP_404_NOT_FOUND)
-        
     @action(methods = ['GET'],detail= True)
     def redis_test_get(self,request,pk):
         cache_key = 'value'
