@@ -8,6 +8,9 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny, I
 from django.shortcuts import get_object_or_404
 from rest_framework import filters
 from django.contrib.auth.models import User
+from django.core.cache import cache
+from django.http import JsonResponse as JSONResponse
+import json
 
 from .serializers import CommentSerializer, DisciplineSerializer, PendingDisciplineSerializer, UserSerializer
 from .models import Discipline, Comment, PendingDiscipline
@@ -52,6 +55,17 @@ class PendingDisciplineViewSet(NoUpdateModelViewSet):
 class DisciplineViewSet(viewsets.ModelViewSet):
     queryset = Discipline.objects.select_related('approved_by').annotate(comment_count=Count('comments'))
 
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
     def get_serializer_class(self):
         if self.action == 'comments':
             return CommentSerializer
@@ -95,16 +109,28 @@ class CommentViewSet(NoUpdateModelViewSet):
     @action(methods=['GET'], detail=True)
     def comment_detail(self, request, pk):
         try:
-            queryset = Comment.objects.annotate(
+            comment_cache = f'comment:{pk}'
+            comment = cache.get(comment_cache)
+            if comment is not None:
+                serializer = self.get_serializer(comment)
+            else:
+                queryset = Comment.objects.annotate(
                 likes_count=Count('likes', distinct=True),
                 dislikes_count=Count('dislikes', distinct=True)
             )
-            comment = queryset.get(pk=pk) 
-            
-            serializer = self.get_serializer(comment)
+                comment = queryset.get(pk=pk)                
+                serializer = self.get_serializer(comment)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Comment.DoesNotExist:
             return Response({'detail': 'Comment not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+    @action(methods = ['GET'],detail= True)
+    def redis_test_get(self,request,pk):
+        cache_key = 'value'
+        cache.set(cache_key,1000,timeout=5000)
+        return JSONResponse({"value" : cache.get('comment_1_cache')})
+    
+
 
 
     @action(methods=['POST'],detail = True)

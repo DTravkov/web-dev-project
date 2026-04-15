@@ -18,6 +18,7 @@ services:
       - 8000
     depends_on:
       - db
+      - redis
 
   nginx:
     image: nginx:latest
@@ -28,6 +29,27 @@ services:
       - ./frontend/dist/frontend/browser:/var/www/html
     depends_on:
       - backend
+    
+  redis:
+    image: redis:7-alpine
+    container_name: redis_app
+    volumes:
+      - redis_data:/data
+    #ports: ["6379:6379"]
+    expose: 
+      - 6379
+    restart: always
+    command: >
+     redis-server 
+     --appendonly yes
+     --appendfsync everysec        
+     --requirepass ${REDIS_PASSWORD:-your_password}
+     --maxmemory 256mb
+     --maxmemory-policy allkeys-lru
+   #(AOF (Append Only File))
+   #  --save 60 100 (RDB)
+   #appendonly.aof
 
 volumes:
   postgres_data:
+  redis_data:
