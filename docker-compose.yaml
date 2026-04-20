@@ -29,7 +29,9 @@ services:
     depends_on:
       - backend
 
-    redis:
+
+
+  redis:
     image: redis:7-alpine
     container_name: redis_app
     volumes:
