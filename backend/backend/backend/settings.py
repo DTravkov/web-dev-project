@@ -117,6 +117,23 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
+REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
+REDIS_HOST = os.environ.get('REDIS_HOST')
+REDIS_PORT = os.environ.get('REDIS_PORT')
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "IGNORE_EXCEPTIONS": True, 
+        }
+    }
+}
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
