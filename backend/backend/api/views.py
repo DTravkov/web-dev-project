@@ -5,14 +5,11 @@ from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny, IsAuthenticated
-from django.shortcuts import get_object_or_404
-from rest_framework import filters
 from django.contrib.auth.models import User
 
-from .serializers import CommentSerializer, DisciplineSerializer, PendingDisciplineSerializer, UserSerializer
-from .models import Discipline, Comment, PendingDiscipline
+from .serializers import CommentSerializer, DisciplineSerializer, PendingDisciplineSerializer, ProfessorSerializer, UserSerializer
+from .models import Discipline, Comment, PendingDiscipline, Professor
 from .permissions import IsCommentOwner
-from .constants import MANAGER
 
 @api_view(http_method_names=['GET'])
 def is_moderator(request):
@@ -50,7 +47,7 @@ class PendingDisciplineViewSet(NoUpdateModelViewSet):
         return Response({"detail" : "Successfully approved"},status=status.HTTP_201_CREATED)
 
 class DisciplineViewSet(viewsets.ModelViewSet):
-    queryset = Discipline.objects.select_related('approved_by').annotate(comment_count=Count('comments'))
+    queryset = Discipline.objects.select_related('approved_by').prefetch_related('professors_list').annotate(comment_count=Count('comments'))
 
     def get_serializer_class(self):
         if self.action == 'comments':
@@ -69,9 +66,9 @@ class DisciplineViewSet(viewsets.ModelViewSet):
     @action(methods=['GET'], detail=True)
     def comments(self, request, pk):
         discipline = self.get_object()
-        comments = discipline.comments.select_related('author').annotate(
-            likes_count=Count('likes' , distinct=True),
-            dislikes_count=Count('dislikes', distinct=True)).all()
+        comments = discipline.comments.annotate(
+            likes_count=Count('likes'),
+            dislikes_count=Count('dislikes')).select_related('author')
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -87,6 +84,7 @@ class CommentViewSet(NoUpdateModelViewSet):
         if self.action in ['create', 'like', 'dislike']:
             return [IsAuthenticated()]
         return [IsAuthenticated(),IsCommentOwner()]
+    
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -164,8 +162,33 @@ class UserViewSet(NoUpdateModelViewSet):
         user.is_active = True
         user.save()
         return Response({"detail" : f"user {user.username}, id : {user.id} banned"},status = status.HTTP_200_OK)
+    
+    @action(detail=True, methods=['get'])
+    def rating(self, request,pk):
+        user = self.get_object()
+        total_likes = Comment.objects.filter(author=user).aggregate(total_likes=Count('likes'))['total_likes'] or 0
+        total_dislikes = Comment.objects.filter(author=user).aggregate(total_dislikes=Count('dislikes'))['total_dislikes'] or 0
+        return Response({"total_likes": total_likes, "total_dislikes": total_dislikes}, status=status.HTTP_200_OK)
         
+        
+class ProfessorViewSet(NoUpdateModelViewSet):
+    queryset = Professor.objects.all()
+    serializer_class = ProfessorSerializer
 
 
+    @action(methods=['GET'], detail=True)
+    def comments(self, request,pk):
+        professor = self.get_object()
+        queryset = professor.professor_comments.all().select_related('author', 'discipline')
+    
+        serializer = CommentSerializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    @action (methods=['GET'], detail=True)
+    def rating(self, request, pk):
+        professor = self.get_object()
+        total_likes = professor.professor_comments.aggregate(total_likes=Count('likes'))['total_likes'] or 0
+        total_dislikes = professor.professor_comments.aggregate(total_dislikes=Count('dislikes'))['total_dislikes'] or 0
+        return Response({"total_likes": total_likes, "total_dislikes": total_dislikes}, status=status.HTTP_200_OK)
     
     
