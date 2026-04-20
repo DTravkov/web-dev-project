@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "authjwt",
     'corsheaders',
     'imagekit',
+    "django_redis"
     
 ]
 

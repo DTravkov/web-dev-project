@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny, IsAuthenticated
 from django.contrib.auth.models import User
 
+
 from .serializers import CommentSerializer, DisciplineSerializer, PendingDisciplineSerializer, ProfessorSerializer, UserSerializer
 from .models import Discipline, Comment, PendingDiscipline, Professor
 from .permissions import IsCommentOwner
@@ -158,7 +159,7 @@ class UserViewSet(NoUpdateModelViewSet):
     
     @action(detail=True, methods=['get'])
     def rating(self, request,pk):
-        user = self.get_object()
+        user = self.get_object()\
         total_likes = Comment.objects.filter(author=user).aggregate(total_likes=Count('likes'))['total_likes'] or 0
         total_dislikes = Comment.objects.filter(author=user).aggregate(total_dislikes=Count('dislikes'))['total_dislikes'] or 0
         return Response({"total_likes": total_likes, "total_dislikes": total_dislikes}, status=status.HTTP_200_OK)
