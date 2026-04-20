@@ -82,3 +82,4 @@ class PendingDisciplineAPITest(APITestCase):
     def test_create_discipline_user_is_unauthorized(self):
         response = self.client.post(path="/api/pending/",data={"name": "Unauthorized Discipline"})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+    
