@@ -1,4 +1,3 @@
-
 from django.db import transaction
 from django.db.models import Count
 from rest_framework import mixins, viewsets, status
@@ -6,7 +5,7 @@ from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny, IsAuthenticated
 from django.contrib.auth.models import User
-
+from django.core.cache import cache
 
 from .serializers import CommentSerializer, DisciplineSerializer, PendingDisciplineSerializer, ProfessorSerializer, UserSerializer
 from .models import Discipline, Comment, PendingDiscipline, Professor
@@ -94,13 +93,24 @@ class CommentViewSet(NoUpdateModelViewSet):
     @action(methods=['GET'], detail=True)
     def comment_detail(self, request, pk):
         try:
-            queryset = Comment.objects.annotate(
-                likes_count=Count('likes', distinct=True),
-                dislikes_count=Count('dislikes', distinct=True)
-            )
-            comment = queryset.get(pk=pk) 
-            
-            serializer = self.get_serializer(comment)
+            likes_cache_key = f"comment_{pk}_likes_count"
+            dislikes_cache_key = f"comment_{pk}_dislikes_count"
+            likes_count_cache = cache.get(likes_cache_key)
+            dislikes_count_cache = cache.get(dislikes_cache_key)
+            if likes_count_cache is None or dislikes_count_cache is None:
+                queryset = Comment.objects.select_related('author', 'discipline').all()
+                comment = queryset.get(pk=pk) 
+                cache.set(likes_cache_key, comment.likes.count())
+                cache.set(dislikes_cache_key, comment.dislikes.count())
+                serializer = self.get_serializer(comment)
+
+            else:
+                comment = Comment.objects.get(pk=pk)
+                serializer = self.get_serializer(comment)
+    
+                serializer['likes_count'] = likes_count_cache
+                serializer['dislikes_count'] = dislikes_count_cache
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Comment.DoesNotExist:
             return Response({'detail': 'Comment not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -159,9 +169,17 @@ class UserViewSet(NoUpdateModelViewSet):
     
     @action(detail=True, methods=['get'])
     def rating(self, request,pk):
-        user = self.get_object()\
-        total_likes = Comment.objects.filter(author=user).aggregate(total_likes=Count('likes'))['total_likes'] or 0
-        total_dislikes = Comment.objects.filter(author=user).aggregate(total_dislikes=Count('dislikes'))['total_dislikes'] or 0
+        user = self.get_object()
+        likes_cache_key = f"user_{user.id}_total_likes"
+        dislikes_cache_key = f"user_{user.id}_total_dislikes"
+        total_likes = cache.get(likes_cache_key)
+        total_dislikes = cache.get(dislikes_cache_key)
+        if total_likes is None or total_dislikes is None:
+            total_likes = Comment.objects.filter(author=user).aggregate(total_likes=Count('likes'))['total_likes'] or 0
+            total_dislikes = Comment.objects.filter(author=user).aggregate(total_dislikes=Count('dislikes'))['total_dislikes'] or 0
+            cache.set(likes_cache_key, total_likes)
+            cache.set(dislikes_cache_key, total_dislikes)
+
         return Response({"total_likes": total_likes, "total_dislikes": total_dislikes}, status=status.HTTP_200_OK)
         
         
@@ -180,6 +198,13 @@ class ProfessorViewSet(NoUpdateModelViewSet):
     @action (methods=['GET'], detail=True)
     def rating(self, request, pk):
         professor = self.get_object()
-        total_likes = professor.professor_comments.aggregate(total_likes=Count('likes'))['total_likes'] or 0
-        total_dislikes = professor.professor_comments.aggregate(total_dislikes=Count('dislikes'))['total_dislikes'] or 0
+        likes_cache_key = f"professor_{professor.id}_total_likes"
+        dislikes_cache_key = f"professor_{professor.id}_total_dislikes"
+        total_likes = cache.get(likes_cache_key)
+        total_dislikes = cache.get(dislikes_cache_key)
+        if total_likes is None or total_dislikes is None:
+            total_likes = professor.professor_comments.aggregate(total_likes=Count('likes'))['total_likes'] or 0
+            total_dislikes = professor.professor_comments.aggregate(total_dislikes=Count('dislikes'))['total_dislikes'] or 0
+            cache.set(likes_cache_key, total_likes)
+            cache.set(dislikes_cache_key, total_dislikes)
         return Response({"total_likes": total_likes, "total_dislikes": total_dislikes}, status=status.HTTP_200_OK)
