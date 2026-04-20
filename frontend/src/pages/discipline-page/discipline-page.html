@@ -1,29 +1,75 @@
-<div class="main-div col">
-    <h2 class="discipline-name">{{discipline()?.name}}</h2>
-    <div class="form-div">
-        <textarea rows="5" [(ngModel)]="currentComment" (ngModelChange)="clearErrorMsg()"
-            class="comment-form"></textarea>
-        <div class="row-center-space-between w100">
-            <app-star-rating-component [clickedCount]="this.currentRating()" [numberOfStars]="5"
-                (clickedEvent)="onRatingChanged($event)"></app-star-rating-component>
-            @if(errorMsg()){
-            <p class="error-msg">{{errorMsg()}}</p>
-            }
-
-            <button class="comment-btn" (click)="onCommentSubmit()">
-                <p>Отправить</p>
-            </button>
+<body>
+    <div class="logo-div row centered">
+        <img src="/assets/logo.png" class="logo-img">
+        <div class="logo-right centered">
+            <marquee direction="right">Discipline discussion board</marquee>
         </div>
     </div>
-    <div class="comments-div">
-        @for(comment of commentsArr(); track $index){
-        <app-comment-component [commentData]="comment" class="comment" (likeEvent)="onLikeClicked($event)"
-            (dislikeEvent)="onDislikeClicked($event)"></app-comment-component>
-        }
+
+    <div class="main-container row">
+
+        <div class="sidebar col">
+            <h4>Navigation</h4>
+            <div style="font-size: 11px; line-height: 1.6;">
+                <a href="/">← Back to disciplines</a><br>
+                Current view: Comments
+            </div>
+        </div>
+
+        <div class="discipline-list col">
+
+            <div class="list-header">
+                {{discipline()?.name}}
+            </div>
+
+            <div class="list-item col">
+
+                <textarea rows="5" [(ngModel)]="currentComment" (ngModelChange)="clearErrorMsg()" class="comment-form">
+                </textarea>
+
+                <div class="row" style="justify-content: space-between; align-items:center; margin-top:10px;">
+
+                    <app-star-rating-component [clickedCount]="currentRating()" [numberOfStars]="5"
+                        (clickedEvent)="onRatingChanged($event)">
+                    </app-star-rating-component>
+
+                    @if(errorMsg()){
+                    <span style="color:red; font-size:11px;">
+                        {{errorMsg()}}
+                    </span>
+                    }
+
+                    <button class="btn" (click)="onCommentSubmit()">
+                        Send
+                    </button>
+
+                </div>
+            </div>
+
+            <div class="list-item">
+                @for(comment of commentsArr(); track $index){
+                <app-comment-component [commentData]="comment" (likeEvent)="onLikeClicked($event)"
+                    (dislikeEvent)="onDislikeClicked($event)">
+                </app-comment-component>
+                }
+            </div>
+
+        </div>
+
+        <div class="sidebar col">
+            <h4>Board Info</h4>
+            <div style="font-size:11px;">
+                Comments loaded dynamically<br>
+                Rating system active<br>
+                Status: online
+            </div>
+
+            <h4 style="margin-top:15px;">Sponsored</h4>
+            <div class="ad-placeholder">
+                <strong style="color:red;">AD</strong><br>
+                Buy better grades (just kidding)
+            </div>
+        </div>
+
     </div>
-
-
-
-
-
-</div>
+</body>

@@ -9,7 +9,9 @@ import { Component, input, output } from '@angular/core';
 export class ButtonComponent {
   id = input.required<number>();
   action = input.required<string>();
+  commentCount = input<number>();
   clickedEvent = output<number>();
+
   onClicked() {
     const id = this.id();
     this.clickedEvent.emit(id);

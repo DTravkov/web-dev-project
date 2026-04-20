@@ -23,7 +23,7 @@ export class AuthService {
   }
 
   postLogin(username: string, password: string) {
-    return this.http.post<IToken>('/api/token/', { username: username, password: password }, { headers: { "Content-Type": "application/json" } })
+    return this.http.post<IToken>('http://127.0.0.1:80/api/token/', { username: username, password: password }, { headers: { "Content-Type": "application/json" } })
       .pipe(
         tap((response) => {
           this.setToken(response.access!, response.refresh!);
@@ -32,11 +32,11 @@ export class AuthService {
   }
 
   postSignup(username: string, password: string) {
-    return this.http.post('/api/signup/', { "username": username, "password": password }, { headers: { "Content-Type": "application/json" } });
+    return this.http.post('http://127.0.0.1:80/api/signup/', { "username": username, "password": password }, { headers: { "Content-Type": "application/json" } });
   }
 
   postRefresh(refresh: string) {
-    return this.http.post<IToken>('/api/token/refresh/', { "refresh": refresh }, { headers: { "Content-Type": "application/json" } })
+    return this.http.post<IToken>('http://127.0.0.1:80/api/token/refresh/', { "refresh": refresh }, { headers: { "Content-Type": "application/json" } })
       .pipe(
         tap((response) => {
           this.setToken(response.access!, response.refresh!);

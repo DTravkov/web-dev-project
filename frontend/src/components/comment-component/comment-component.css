@@ -80,3 +80,75 @@ a {
     cursor: pointer;
     font-weight: bold;
 }
+
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.row-center {
+    display: flex;
+    align-items: center;
+}
+
+.row-center-space-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.row-center-baseline {
+    display: flex;
+    align-items: baseline;
+}
+
+
+.g4 {
+    gap: 4px;
+}
+
+.g8 {
+    gap: 8px;
+}
+
+.g16 {
+    gap: 16px;
+}
+
+
+.m8 {
+    margin: 8px;
+}
+
+.m16 {
+    margin: 16px;
+}
+
+
+.p4 {
+    padding: 4px;
+}
+
+.comments-div {
+    max-width: 800px;
+    width: 100%;
+    margin: 8px;
+}
+
+.like-dislike-btn {
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    min-height: 18px;
+    object-fit: contain;
+    cursor: pointer;
+}
+
+.star-icon {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    min-height: 16px;
+    object-fit: contain;
+}

@@ -31,12 +31,10 @@
         </div>
 
         <div class="discipline-list col">
-            <div class="list-header spaced-between" style="justify-content: space-between;">
-                <p>📚 |Disciplines available : {{buttons().length}}</p>
-            </div>
+            <div class="list-header">👤|Teachers available : {{buttons().length}}</div>
             @for(btn of buttons();track $index){
-            <app-button-component [id]="btn.id" [action]="btn.name" (clickedEvent)="onButtonClicked($event)"
-                [commentCount]="btn.comment_count"></app-button-component>
+            <app-button-component [id]="btn.id" [action]="btn.name"
+                (clickedEvent)="onButtonClicked($event)"></app-button-component>
             }
         </div>
 
@@ -60,27 +58,3 @@
     </div>
 
 </body>
-
-
-
-
-<!-- <div class="outer">
-
-    <div class="list">
-        <h1 class="list-msg">List of all Disciplines</h1>
-        <div class="list-row">
-            @for(btn of buttons();track btn.name){
-            <app-button-component [id]="btn.id" [action]="btn.name" (clickedEvent)="onButtonClicked($event)"
-                class="discipline-btn"></app-button-component>
-            }
-        </div>
-
-        @if(buttons().length === 0){
-        <div class="col-center m32">
-            <h2>No disciplines available yet.</h2>
-        </div>
-        }
-    </div>
-
-
-</div> -->

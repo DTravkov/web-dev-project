@@ -1,11 +1,11 @@
 import { Component, computed, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
 import { ButtonComponent } from '../../components/button-component/button-component';
 import { ApiService } from '../../services/api-service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-discipline-list-page',
-  imports: [ButtonComponent],
+  imports: [ButtonComponent,],
   templateUrl: './discipline-list-page.html',
   styleUrl: './discipline-list-page.css',
 })

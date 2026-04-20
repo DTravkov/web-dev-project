@@ -49,7 +49,6 @@ class ProfessorSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
 class DisciplineSerializer(serializers.ModelSerializer):
-    approved_by = UserSerializer(many=False, read_only=True)
     comment_count = serializers.IntegerField(read_only=True)
     professors_list = ProfessorSerializer(many=True, read_only=True)
     class Meta:

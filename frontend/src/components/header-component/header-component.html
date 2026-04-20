@@ -1,29 +1,39 @@
 <div class="header">
     <div class="row" style="justify-content: space-between;">
         <div class="row baseline">
-            <a href="#" class="btn">Home page</a>
             <div class="dropdown">
-                <a href="#" class="btn">Disciplines</a>
+                <a class="btn" [routerLink]="['/disciplines']">Disciplines</a>
                 <div class="dropdown-content">
-                    <a href="#">Discipline List</a>
-                    <a href="#">Offer new Discipline</a>
+                    <a [routerLink]="['/disciplines']">Discipline List</a>
+                    <a [routerLink]="['/disciplines/offer']">Offer new Discipline</a>
                 </div>
             </div>
 
             <div class="dropdown">
-                <a href="#" class="btn">Teachers</a>
-                <div class="dropdown-content">
-                    <a href="#">Teacher List</a>
-                    <a href="#">Offer new Teacher</a>
+                <a class="btn" [routerLink]="['/professors']">Professors</a>
+                <div class=" dropdown-content">
+                    <a [routerLink]="['/professors']">Professor List</a>
+                    <a [routerLink]="['/professors/offer']">Offer new Professor</a>
                 </div>
             </div>
 
-            <a href="#" class="btn">Donations ;3</a>
+            <a class="btn">Donations ;3</a>
         </div>
+        @if(this.auth.isLoggedIn()){
+        <p style="color: white;">Добро пожаловать!
+        </p>
+        <div class="btn" (click)="onLogoutClicked()">Logout</div>
+        }
+        @else{
         <div class="row baseline">
-            <a href="#" class="btn">Login</a>
-            <a href="#" class="btn">Signup</a>
+            <p>{{errMessage()}}</p>
+            <input type="text" [(ngModel)]="login" class="field" placeholder="Login">
+            <input type="text" [(ngModel)]="password" class="field" placeholder="Password" type="password">
+            <div class="btn" (click)="onLoginClicked()">Login</div>
+            <div class="btn" (click)="onSignupClicked()">Signup</div>
         </div>
+        }
+
     </div>
 
 </div>
