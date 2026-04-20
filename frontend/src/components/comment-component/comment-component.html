@@ -1,7 +1,10 @@
 <div class="row-center-space-between m8">
     <div class="row-center">
-        <img src="/assets/profile-placeholder.jpg" class="profile-picutre" alt="">
-        <p>{{commentData().author.username}}</p>
+        <img [src]="commentData().author_avatar" class="profile-picutre" alt="">
+        <a [href]=" 'users/' + commentData().author.id">
+            <p>{{commentData().author.username}}</p>
+        </a>
+
     </div>
 
 </div>

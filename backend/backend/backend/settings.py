@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'drf_spectacular',
     "api",
     "authjwt",
-    'corsheaders'
+    'corsheaders',
+    'imagekit',
     
 ]
 
@@ -166,5 +167,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "/static/"
-
 STATIC_ROOT = "/app/static/"
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = '/app/media/'

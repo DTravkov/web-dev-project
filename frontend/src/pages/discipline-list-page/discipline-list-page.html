@@ -1,4 +1,67 @@
-<div class="outer">
+<body>
+    <div class="logo-div row centered">
+        <img src="/media/logo.png" alt="Logo" class="logo-img">
+        <div class="logo-right centered">
+            <marquee direction="right">
+                <p>Your ads here.</p>
+            </marquee>
+        </div>
+    </div>
+
+
+    <div class="main-container row">
+        <div class="sidebar col">
+            <h4>Board Statistics</h4>
+            <div style="font-size: 11px; line-height: 1.6;">
+                Disciplines: 1,024<br>
+                Professors: 1,024<br>
+                Comments: 45,902<br>
+                Lovely KBTU students: 45,902<br>
+                Best rated Professor : N/A
+            </div>
+            <h4 style="margin-top: 15px;">FAQ</h4>
+            <div class="faq-item">
+                <span class="faq-q">How do I offer discipline?</span>
+                <span class="faq-a">If you havent yet found it out, maybe you shouldn't</span>
+            </div>
+            <div class="faq-item">
+                <span class="faq-q">Forgotten password?</span>
+                <span class="faq-a">Use "Your Head" feature</span>
+            </div>
+        </div>
+
+        <div class="discipline-list col">
+            <div class="list-header">Disciplines available</div>
+            @for(btn of buttons();track $index){
+            <app-button-component [id]="btn.id" [action]="btn.name"></app-button-component>
+            }
+        </div>
+
+        <div class="sidebar col">
+            <h4>Latest Donors</h4>
+            <ul style="padding-left: 18px; margin: 0; font-size: 11px;">
+                <li>Anonymous - $50.00</li>
+                <li>RetroCoder - $10.00</li>
+                <li>AdminFan - $5.00</li>
+            </ul>
+            <h4 style="margin-top: 15px;">Sponsored Content</h4>
+            <div class="ad-placeholder">
+                <strong style="color:#cc0000; font-size: 10px;">HOT OFFER!</strong><br>
+                <span style="font-size: 11px;">Get 1GB RAM for your VPS today!</span>
+            </div>
+            <div class="ad-placeholder">
+                <span style="font-size: 11px;">Want to see your link here? <a href="#"
+                        style="color:#105289">Click!</a></span>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+
+
+
+<!-- <div class="outer">
 
     <div class="list">
         <h1 class="list-msg">List of all Disciplines</h1>
@@ -17,4 +80,4 @@
     </div>
 
 
-</div>
+</div> -->

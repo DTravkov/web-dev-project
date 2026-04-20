@@ -73,3 +73,10 @@ hr {
     width: 36px;
     margin-right: 16px;
 }
+
+a {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    font-weight: bold;
+}

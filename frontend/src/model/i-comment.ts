@@ -10,4 +10,5 @@ export interface IComment {
     discipline: number | IDiscipline;
     likes_count: number;
     dislikes_count: number;
+    author_avatar: string;
 }

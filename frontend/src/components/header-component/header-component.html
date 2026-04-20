@@ -1,56 +1,29 @@
-<div class="screen-centered black-bottom-border">
-    <div class="header row-center-space-between">
-        <div class="row-center-baseline g8">
-            <div class="header-btn" (click)="onDisciplineListClicked()">
-                <strong>
-                    <p>Logo</p>
-                </strong>
+<div class="header">
+    <div class="row" style="justify-content: space-between;">
+        <div class="row baseline">
+            <a href="#" class="btn">Home page</a>
+            <div class="dropdown">
+                <a href="#" class="btn">Disciplines</a>
+                <div class="dropdown-content">
+                    <a href="#">Discipline List</a>
+                    <a href="#">Offer new Discipline</a>
+                </div>
             </div>
-            <div class="header-btn" (click)="onDisciplineListClicked()" routerLink="/disciplines"
-                routerLinkActive="header-btn-picked" [routerLinkActiveOptions]="{exact : true}">
-                <strong>
-                    <p>Discipline List</p>
-                </strong>
-            </div>
-        </div>
-        <div class="row-center-baseline g8">
-            @if(!this.auth.isLoggedIn()){
-            <div class="header-btn" (click)="onSignupClicked()" routerLink="/signup"
-                routerLinkActive="header-btn-picked">
-                <strong>
-                    <p>Sign up</p>
-                </strong>
-            </div>
-            <div class="header-btn" (click)="onLoginClicked()" routerLink="/login" routerLinkActive="header-btn-picked">
-                <strong>
-                    <p>Log in</p>
-                </strong>
-            </div>
-            }
-            @else{
-            @if(userCanApprove()){
-            <div class="header-btn" (click)="onApproveListClicked()" routerLink="/disciplines/approve-list"
-                routerLinkActive="header-btn-picked">
-                <strong>
-                    <p>Approve List</p>
-                </strong>
-            </div>
-            }
-            <div class="header-btn offer" (click)="onOfferDisciplineClicked()" routerLink="/disciplines/offer"
-                routerLinkActive="header-btn-picked">
-                <strong>
-                    <p>Offer new discipline</p>
-                </strong>
-            </div>
-            <hr class="v-hr">
-            <div class="header-btn logout" (click)="onLogoutClicked()">
-                <strong>
-                    <p>Logout</p>
-                </strong>
-            </div>
-            }
 
-        </div>
+            <div class="dropdown">
+                <a href="#" class="btn">Teachers</a>
+                <div class="dropdown-content">
+                    <a href="#">Teacher List</a>
+                    <a href="#">Offer new Teacher</a>
+                </div>
+            </div>
 
+            <a href="#" class="btn">Donations ;3</a>
+        </div>
+        <div class="row baseline">
+            <a href="#" class="btn">Login</a>
+            <a href="#" class="btn">Signup</a>
+        </div>
     </div>
+
 </div>

@@ -1,9 +1,10 @@
 import { Component, input, output } from '@angular/core';
 import { IComment } from '../../model/i-comment';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-comment-component',
-  imports: [],
+  imports: [NgOptimizedImage],
   templateUrl: './comment-component.html',
   styleUrl: './comment-component.css',
 })

@@ -5,11 +5,13 @@ import { SignupComponent } from '../components/signup-component/signup-component
 import { DisciplinePage } from '../pages/discipline-page/discipline-page';
 import { OfferPage } from '../pages/offer-page/offer-page';
 import { ApproveListPage } from '../pages/approve-list-page/approve-list-page';
+import { ProfilePage } from '../pages/profile-page/profile-page';
 
 export const routes: Routes = [
     { path: 'disciplines', component: DisciplineListPage },
     { path: 'login', component: LoginComponent },
     { path: 'signup', component: SignupComponent },
+    { path: 'disciplines/users/:id', component: ProfilePage },
     { path: 'disciplines/approve-list', component: ApproveListPage },
     { path: 'disciplines/offer', component: OfferPage },
     { path: 'disciplines/:id', component: DisciplinePage },

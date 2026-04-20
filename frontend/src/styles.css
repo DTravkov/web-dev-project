@@ -6,7 +6,7 @@ body {
     padding: 0;
 }
 
-*,
+/* *,
 *::before,
 *::after {
     box-sizing: border-box;
@@ -185,4 +185,212 @@ body {
 
 .g16 {
     gap: 0px 16px;
+} */
+
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #e2e2e2;
+    font-family: Tahoma, Arial, sans-serif;
+    font-size: 13px;
+    color: #333;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+}
+
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* HEADER & DROPDOWN SYSTEM */
+.header {
+    padding: 5px 20px;
+    width: 100%;
+    background-color: #b6b6b6;
+    border-bottom: 1px solid #666;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    position: relative;
+    /* Context for dropdowns */
+    z-index: 100;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.btn {
+    background-color: #efefef;
+    padding: 4px 12px;
+    margin-left: 3px;
+    margin-right: 3px;
+    color: #3a3a3a;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid #999;
+    font-weight: bold;
+    display: block;
+}
+
+.btn:hover {
+    background-color: #fff;
+    color: #000;
+}
+
+/* The Menu (Hidden by default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    border: 1px solid #999;
+    z-index: 1;
+}
+
+/* Dropdown Links */
+.dropdown-content a {
+    color: #333;
+    padding: 8px 12px;
+    text-decoration: none;
+    display: block;
+    border-bottom: 1px solid #eee;
+}
+
+.dropdown-content a:hover {
+    color: #000;
+}
+
+/* Show on Hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.logo-div {
+    width: 100%;
+    height: 120px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #ccc;
+    gap: 20px;
+}
+
+.logo-img {
+    max-height: 80px;
+    flex: 0 0 auto;
+}
+
+.logo-right {
+    flex: 1;
+    height: 80px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    color: #666;
+    font-style: italic;
+    font-family: "Times New Roman", serif;
+    font-size: 20px;
+}
+
+.main-container {
+    width: 100%;
+    padding: 20px;
+    gap: 15px;
+}
+
+.sidebar {
+    width: 240px;
+    background: #f4f4f4;
+    border: 1px solid #ccc;
+    padding: 10px;
+    height: fit-content;
+    flex-shrink: 0;
+}
+
+.sidebar h4 {
+    background-color: #c0c8d0;
+    margin: -10px -10px 10px -10px;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-bottom: 1px solid #ccc;
+}
+
+.discipline-list {
+    flex: 1;
+    background-color: #fff;
+    border: 1px solid #aaa;
+}
+
+.list-header {
+    background-color: #b0bbc8;
+    color: #000;
+    padding: 10px;
+    font-weight: bold;
+    border-bottom: 1px solid #aaa;
+}
+
+.list-item {
+    padding: 12px;
+    background-color: #efefef;
+    border-bottom: 1px solid #ccc;
+}
+
+.list-item:hover {
+    background-color: #e8e8e8;
+}
+
+.list-item a {
+    color: #003399;
+    font-weight: bold;
+    text-decoration: underline;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.list-item span {
+    font-size: 11px;
+    color: #003399;
+}
+
+.ad-placeholder {
+    margin-top: 10px;
+    padding: 15px 5px;
+    border: 1px dashed #999;
+    background-color: #fff;
+    text-align: center;
+}
+
+.faq-item {
+    margin-bottom: 10px;
+}
+
+.faq-q {
+    font-weight: bold;
+    font-size: 11px;
+    display: block;
+    color: #105289;
+}
+
+.faq-a {
+    font-size: 11px;
+    color: #555;
 }
