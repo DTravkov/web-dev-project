@@ -83,5 +83,18 @@ export class AuthService {
     return false;
   }
 
+  getCurrentUserId(): number | null {
+    const token = this.getToken();
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const decoded = jwtDecode<ITokenDecoded>(token);
+      return Number(decoded.user_id);
+    } catch {
+      return null;
+    }
+  }
 
 }

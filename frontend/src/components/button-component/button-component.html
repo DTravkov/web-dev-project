@@ -1,7 +1,6 @@
 <div class="list-item" (click)="onClicked()">
     <div style="color: darkblue; font-weight: bold;">{{action()}}</div>
-    @if(commentCount()){
-    <span>Comments : {{commentCount()}}</span>
-    }
+    <span>Comments : {{commentCount() || 0}}</span>
+
 
 </div>

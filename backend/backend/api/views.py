@@ -1,15 +1,15 @@
 
 from django.db import transaction
-from django.db.models import Count
+from django.db.models import Count, Q
 from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny, IsAuthenticated
 from django.contrib.auth.models import User
 
-from .serializers import CommentSerializer, DisciplineSerializer, PendingDisciplineSerializer, ProfessorSerializer, UserSerializer
-from .models import Discipline, Comment, PendingDiscipline, Professor
-from .permissions import IsCommentOwner
+from .serializers import CommentSerializer, DisciplineSerializer, PendingDisciplineSerializer, PendingProfessorSerializer, ProfessorSerializer, UserProfileSerializer, UserSerializer
+from .models import Discipline, Comment, PendingDiscipline, PendingProfessor, Professor
+from .permissions import IsCommentOwner, IsModerator
 
 @api_view(http_method_names=['GET'])
 def is_moderator(request):
@@ -18,6 +18,21 @@ def is_moderator(request):
     if request.user.groups.filter(name='Manager').exists():
         return Response({"detail" : "manager"}, status=status.HTTP_200_OK)
     return Response({"detail" : "user"}, status=status.HTTP_200_OK)
+
+
+@api_view(http_method_names=['GET'])
+def stats(request):
+
+    return Response(
+        {
+            "users_count": User.objects.count(),
+            "comments_count": Comment.objects.count(),
+            "teachers_count": Professor.objects.count(),
+            "disciplines_count": Discipline.objects.count(),
+            "pending_count": PendingDiscipline.objects.count() + PendingProfessor.objects.count(),
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 class NoUpdateModelViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin):
@@ -31,9 +46,12 @@ class PendingDisciplineViewSet(NoUpdateModelViewSet):
             return None
         return super().get_serializer(*args, **kwargs)
     def get_permissions(self):
-        if self.action == 'create':
+        if self.action in ['create', 'mypending']:
             return [IsAuthenticated()]
-        return [IsAdminUser()]
+        return [IsModerator()]
+    
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
     @action(methods=['POST'], detail=True)
     def approve(self, request, pk):
@@ -45,6 +63,58 @@ class PendingDisciplineViewSet(NoUpdateModelViewSet):
             record.delete()
 
         return Response({"detail" : "Successfully approved"},status=status.HTTP_201_CREATED)
+    
+    @action(methods=['GET'], detail=False)
+    def mypending(self, request):
+        serializer = PendingDisciplineSerializer(self.queryset.filter(author_id=request.user.id), many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
+    @action(methods=['GET'], detail=False)
+    def allpending(self, request):
+        serializer = PendingDisciplineSerializer(self.queryset.all(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class PendingProfessorViewSet(NoUpdateModelViewSet):
+    queryset = PendingProfessor.objects.select_related('discipline')
+    serializer_class = PendingProfessorSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        if self.action == 'approve':
+            return None
+        return super().get_serializer(*args, **kwargs)
+
+    def get_permissions(self):
+        if self.action in ['create', 'mypending']:
+            return [IsAuthenticated()]
+        return [IsModerator()]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+    @action(methods=['POST'], detail=True)
+    def approve(self, request, pk):
+        record = self.get_object()
+        with transaction.atomic():
+            Professor.objects.create(
+                name=record.name,
+                surname=record.surname,
+                discipline=record.discipline,
+            )
+            record.delete()
+
+        return Response({"detail": "Successfully approved"}, status=status.HTTP_201_CREATED)
+
+    @action(methods=['GET'], detail=False)
+    def mypending(self, request):
+        serializer = PendingProfessorSerializer(self.queryset.filter(author_id=request.user.id), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(methods=['GET'], detail=False)
+    def allpending(self, request):
+        serializer = PendingProfessorSerializer(self.queryset.all(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class DisciplineViewSet(viewsets.ModelViewSet):
     queryset = Discipline.objects.select_related('approved_by').prefetch_related('professors_list').annotate(comment_count=Count('comments'))
@@ -54,7 +124,6 @@ class DisciplineViewSet(viewsets.ModelViewSet):
             return CommentSerializer
         return DisciplineSerializer
     
-
     def get_permissions(self):
         if self.action in ['list', 'retrieve', 'comments']:
             return [AllowAny()]
@@ -88,7 +157,6 @@ class CommentViewSet(NoUpdateModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-
     
     @action(methods=['GET'], detail=True)
     def comment_detail(self, request, pk):
@@ -132,15 +200,25 @@ class CommentViewSet(NoUpdateModelViewSet):
                 comment.likes.remove(user)
             
             return Response(status=status.HTTP_204_NO_CONTENT)
-
-    
-    
+        
 class UserViewSet(NoUpdateModelViewSet):
-    queryset = User.objects.all()
+    def get_queryset(self):
+        if self.action in ['retrieve', 'profile']:
+            return User.objects.all().annotate(
+                comment_count=Count('user_comments', distinct=True),
+                like_count=Count('user_comments__likes', filter=Q(user_comments__likes__isnull=False), distinct=True),
+                dislike_count=Count('user_comments__dislikes', filter=Q(user_comments__dislikes__isnull=False), distinct=True),
+            )
+        return User.objects.all()
     serializer_class = UserSerializer
 
+    def get_serializer_class(self):
+        if self.action == 'profile':
+            return UserProfileSerializer
+        return UserSerializer
+
     def get_permissions(self):
-        if self.action in ['list','retrieve']:
+        if self.action in ['list','retrieve', 'profile']:
             return [AllowAny()]
         return [IsAdminUser()]
 
@@ -162,8 +240,13 @@ class UserViewSet(NoUpdateModelViewSet):
         user.is_active = True
         user.save()
         return Response({"detail" : f"user {user.username}, id : {user.id} banned"},status = status.HTTP_200_OK)
-        
-        
+
+    @action(detail=True, methods=['get'], permission_classes=[AllowAny])
+    def profile(self, request, pk = None):
+        user = self.get_object()
+        serializer = self.get_serializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 class ProfessorViewSet(NoUpdateModelViewSet):
     queryset = Professor.objects.all()
     serializer_class = ProfessorSerializer

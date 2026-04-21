@@ -1,39 +1,42 @@
-<div class="row-center-space-between m8">
-    <div class="row-center g8">
-        <img [src]="commentData().author_avatar" class="profile-picutre">
-        <a [href]="'users/' + commentData().author.id">
-            {{commentData().author.username}}
-        </a>
-    </div>
-</div>
+<div style="margin: 24px 0px; border-style: solid; border-width: 1px; border-color: #90a9c594; padding: 10px;">
+    <div class=" row-center-space-between">
+        <div class="row-center g8">
+            <img [src]="commentData().author_avatar" class="profile-picutre">
+            <a [routerLink]="['/disciplines/users', commentData().author.id]">
+                {{commentData().author.username}}
+            </a>
 
-<hr>
-
-<div class="row m16">
-    <p>{{commentData().content}}</p>
-</div>
-
-<div class="row-center-space-between m8">
-
-    <div class="row-center-baseline g4">
-        <img src="/assets/filled_star.png" class="star-icon">
-        <h3>{{commentData().rating}}</h3>
-    </div>
-
-    <div class="row-center g16">
-        <p>
-            {{commentData().created_at.slice(0,10)}}
-            /
-            {{commentData().created_at.slice(11,16)}}
-        </p>
-
-        <div class="row-center g4">
-            <img src="/assets/like.svg" class="like-dislike-btn" (click)="onLikeClicked()">
-            <span>{{commentData().likes_count}}</span>
-
-            <img src="/assets/dislike.svg" class="like-dislike-btn" (click)="onDislikeClicked()">
-            <span>{{commentData().dislikes_count}}</span>
         </div>
     </div>
 
+    <hr>
+
+    <div class="row m16">
+        <p>{{commentData().content}}</p>
+    </div>
+
+    <div class="row-center-space-between m8">
+
+        <div class="row-center-baseline g4">
+            <img src="/assets/filled_star.png" class="star-icon">
+            <h3>{{commentData().rating}}</h3>
+        </div>
+
+        <div class="row-center g16">
+            <p>
+                {{commentData().created_at.slice(0,10)}}
+                /
+                {{commentData().created_at.slice(11,16)}}
+            </p>
+
+            <div class="row-center g4">
+                <img src="/assets/like.svg" class="like-dislike-btn" (click)="onLikeClicked()">
+                <span>{{commentData().likes_count}}</span>
+
+                <img src="/assets/dislike.svg" class="like-dislike-btn" (click)="onDislikeClicked()">
+                <span>{{commentData().dislikes_count}}</span>
+            </div>
+        </div>
+
+    </div>
 </div>

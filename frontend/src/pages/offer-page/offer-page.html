@@ -1,17 +1,79 @@
-<div class="main-div col-center">
-    <h1 class="offer-msg">Offer your disciline</h1>
-    <div class="form-div">
-        <textarea rows="5" [(ngModel)]="currentComment" (ngModelChange)="clearErrorMsg()"
-            class="comment-form"></textarea>
-        <div class="row-center-space-between w100">
-            <div>
-                @if(errorMsg()){
-                <p class="error-msg">{{errorMsg()}}</p>
-                }
-            </div>
-
-            <button class="comment-btn" (click)="onSubmitClicked()">
-                <p>Отправить</p>
-            </button>
+<body>
+    <div class="logo-div row centered">
+        <img src="/assets/logo.png" alt="Logo" class="logo-img">
+        <div class="logo-right centered">
+            <marquee direction="right">
+                <p>Your ads here.</p>
+            </marquee>
         </div>
     </div>
+
+    <div class="main-container row">
+        <div class="sidebar col">
+            <h4>Discipline Tips</h4>
+            <div class="faq-item">
+                <span class="faq-q">Keep the title short</span>
+                <span class="faq-a">Use the official discipline name so admins can approve it faster.</span>
+            </div>
+            <div class="faq-item">
+                <span class="faq-q">One discipline per request</span>
+                <span class="faq-a">Send separate offers if you want to suggest multiple new entries.</span>
+            </div>
+        </div>
+
+        <div class="discipline-list col">
+            <div class="list-header">Offer a new discipline</div>
+            <div class="offer-panel">
+                <p class="offer-copy">Didn’t find your subject in the board? Send it here and it will appear in the
+                    approval queue.</p>
+                <label class="field-label" for="discipline-offer">Discipline name</label>
+                <textarea id="discipline-offer" rows="4" [(ngModel)]="currentComment" (ngModelChange)="clearErrorMsg()"
+                    class="offer-input" placeholder="Example: Linear Algebra"></textarea>
+
+                @if(errorMsg()){
+                <p class="status-msg">{{errorMsg()}}</p>
+                }
+
+                <div class="action-row">
+                    <button class="comment-btn secondary-btn" routerLink="/disciplines">Back to list</button>
+                    <button class="comment-btn" (click)="onSubmitClicked()">Send offer</button>
+                </div>
+            </div>
+
+            <div class="pending-section">
+                <div class="sub-header">{{auth.isManager() ? 'All pending disciplines' : 'Your pending disciplines'}}
+                </div>
+                @if(!auth.isLoggedIn()){
+                <p class="empty-state">Log in to see the disciplines you already offered.</p>
+                }
+                @else if(pendingDisciplines().length === 0){
+                <p class="empty-state">No pending disciplines yet.</p>
+                }
+                @else {
+                <div class="pending-list">
+                    @for(item of pendingDisciplines(); track item.id){
+                    <div class="pending-card pending-row">
+                        <span>{{item.name}}</span>
+                        @if(auth.isManager()){
+                        <button class="approve-btn" (click)="onApproveClicked(item.id)">Approve</button>
+                        }
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+        </div>
+
+        <div class="sidebar col">
+            <h4>What happens next?</h4>
+            <div class="faq-item">
+                <span class="faq-q">1. Request is saved</span>
+                <span class="faq-a">Your offer goes to the pending list for moderators.</span>
+            </div>
+            <div class="faq-item">
+                <span class="faq-q">2. Admin reviews it</span>
+                <span class="faq-a">Approved disciplines become visible on the main board.</span>
+            </div>
+        </div>
+    </div>
+</body>

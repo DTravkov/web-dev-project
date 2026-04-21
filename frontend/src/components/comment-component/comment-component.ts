@@ -1,9 +1,10 @@
 import { Component, input, output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { IComment } from '../../model/i-comment';
 
 @Component({
   selector: 'app-comment-component',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './comment-component.html',
   styleUrl: './comment-component.css',
 })

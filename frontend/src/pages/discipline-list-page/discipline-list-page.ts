@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
 import { ButtonComponent } from '../../components/button-component/button-component';
 import { ApiService } from '../../services/api-service';
 import { Router, RouterLink } from '@angular/router';
@@ -10,9 +10,10 @@ import { Router, RouterLink } from '@angular/router';
   styleUrl: './discipline-list-page.css',
 })
 export class DisciplineListPage {
-  private api = inject(ApiService);
+  api = inject(ApiService);
   private disciplineMap = this.api.getDisciplineMap();
   private router = inject(Router);
+  stats = computed(() => this.api.getStats())
   buttons = computed(() => {
     return Object.values(this.disciplineMap())
   });
@@ -22,5 +23,8 @@ export class DisciplineListPage {
     this.router.navigate(['/disciplines/', trueId.toString()]);
   }
 
+  onOfferClicked() {
+    this.router.navigate(['/disciplines/offer']);
+  }
 
 }

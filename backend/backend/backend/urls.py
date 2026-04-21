@@ -13,7 +13,7 @@ from rest_framework_simplejwt.views import (
     TokenBlacklistView
 )
 
-from api.urls import api_router
+from api.urls import api_router, urlpatterns as api_urlpatterns
 from authjwt.urls import auth_router
 from api.views import is_moderator
 
@@ -32,4 +32,5 @@ urlpatterns = [
 ]
 
 urlpatterns += api_router.urls
+urlpatterns += api_urlpatterns
 urlpatterns += auth_router.urls

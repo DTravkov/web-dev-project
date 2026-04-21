@@ -1,0 +1,90 @@
+<body>
+    <div class="logo-div row centered">
+        <img src="/assets/logo.png" alt="Logo" class="logo-img">
+        <div class="logo-right centered">
+            <marquee direction="right">
+                <p>Your ads here.</p>
+            </marquee>
+        </div>
+    </div>
+
+    <div class="main-container row">
+        <div class="sidebar col">
+            <h4>Teacher Tips</h4>
+            <div class="faq-item">
+                <span class="faq-q">Use real names</span>
+                <span class="faq-a">Enter the teacher’s first and last name as students know them.</span>
+            </div>
+            <div class="faq-item">
+                <span class="faq-q">Add a discipline if possible</span>
+                <span class="faq-a">It helps moderators attach the teacher to the correct subject faster.</span>
+            </div>
+        </div>
+
+        <div class="discipline-list col">
+            <div class="list-header">Offer a new teacher</div>
+            <div class="offer-panel">
+                <p class="offer-copy">Send a teacher suggestion here. You can optionally connect the teacher to an existing discipline right away.</p>
+
+                <label class="field-label" for="teacher-name">First name</label>
+                <input id="teacher-name" class="offer-input short-input" [ngModel]="teacherName()"
+                    (ngModelChange)="teacherName.set($event); clearStatus()" placeholder="Example: Alan">
+
+                <label class="field-label" for="teacher-surname">Last name</label>
+                <input id="teacher-surname" class="offer-input short-input" [ngModel]="teacherSurname()"
+                    (ngModelChange)="teacherSurname.set($event); clearStatus()" placeholder="Example: Turing">
+
+                <label class="field-label" for="teacher-discipline">Discipline</label>
+                <select id="teacher-discipline" class="offer-input short-input" [ngModel]="teacherDiscipline()"
+                    (ngModelChange)="teacherDiscipline.set($event); clearStatus()">
+                    <option value="">No discipline selected</option>
+                    @for(discipline of disciplines(); track discipline.id){
+                    <option [value]="discipline.id">{{discipline.name}}</option>
+                    }
+                </select>
+
+                @if(statusMsg()){
+                <p class="status-msg">{{statusMsg()}}</p>
+                }
+
+                <div class="action-row">
+                    <button class="comment-btn secondary-btn" routerLink="/professors">Back to list</button>
+                    <button class="comment-btn" (click)="onSubmitClicked()">Send offer</button>
+                </div>
+            </div>
+
+            <div class="pending-section">
+                <div class="sub-header">{{auth.isManager() ? 'All pending teachers' : 'Your pending teachers'}}</div>
+                @if(!auth.isLoggedIn()){
+                <p class="empty-state">Log in to see the teachers you already offered.</p>
+                }
+                @else if(pendingTeachers().length === 0){
+                <p class="empty-state">No pending teachers yet.</p>
+                }
+                @else {
+                <div class="pending-list">
+                    @for(item of pendingTeachers(); track item.id){
+                    <div class="pending-card">
+                        <div class="pending-row">
+                            <strong>{{item.name}} {{item.surname}}</strong>
+                            @if(auth.isManager()){
+                            <button class="approve-btn" (click)="onApproveClicked(item.id)">Approve</button>
+                            }
+                        </div>
+                        <span>{{item.discipline_name ?? 'No discipline selected'}}</span>
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+        </div>
+
+        <div class="sidebar col">
+            <h4>Current Status</h4>
+            <div class="faq-item">
+                <span class="faq-q">Optional discipline link</span>
+                <span class="faq-a">If selected, the pending teacher will keep that discipline FK when approved.</span>
+            </div>
+        </div>
+    </div>
+</body>

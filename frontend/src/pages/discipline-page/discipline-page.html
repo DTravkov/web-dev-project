@@ -27,6 +27,17 @@
                 <textarea rows="5" [(ngModel)]="currentComment" (ngModelChange)="clearErrorMsg()" class="comment-form">
                 </textarea>
 
+                <div class="teacher-row">
+                    <label for="teacher-select" class="teacher-label">Teacher</label>
+                    <select id="teacher-select" class="teacher-select" [ngModel]="selectedTeacherId()"
+                        (ngModelChange)="onTeacherChanged($event)">
+                        <option value="">No teacher selected</option>
+                        @for(teacher of teachers(); track teacher.id){
+                        <option [value]="teacher.id">{{teacher.name}} {{teacher.surname}}</option>
+                        }
+                    </select>
+                </div>
+
                 <div class="row" style="justify-content: space-between; align-items:center; margin-top:10px;">
 
                     <app-star-rating-component [clickedCount]="currentRating()" [numberOfStars]="5"

@@ -1,0 +1,56 @@
+/* Donation Page Specifics */
+.donor-hero {
+    background-color: #f0f4f8;
+}
+
+.bank-card {
+    background-color: #fff;
+    border: 1px solid #999;
+    padding: 20px;
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.bank-row {
+    display: flex;
+    padding: 8px 0;
+    border-bottom: 1px dotted #ccc;
+}
+
+.bank-row:last-child {
+    border-bottom: none;
+}
+
+.bank-label {
+    width: 150px;
+    font-weight: bold;
+    font-size: 11px;
+    color: #666;
+    text-transform: uppercase;
+}
+
+.bank-value {
+    color: #000;
+    font-weight: bold;
+}
+
+.security-notice {
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 11px;
+    color: #444;
+}
+
+.stat-box.clickable:hover {
+    background-color: #eef2f6;
+    cursor: pointer;
+    border-color: #105289;
+}
+
+.w100 {
+    width: 100%;
+}

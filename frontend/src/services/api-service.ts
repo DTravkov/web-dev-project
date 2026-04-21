@@ -3,7 +3,11 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { IDiscipline } from '../model/i-discipline';
 import { IComment } from '../model/i-comment';
 import { IPendingDiscipline } from '../model/i-pending-discipline';
+import { IPendingTeacher } from '../model/i-pending-teacher';
+import { IProfile } from '../model/i-profile';
+import { IStats } from '../model/i-stats';
 import { ITeacher } from '../model/i-teacher';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
@@ -31,11 +35,30 @@ export class ApiService {
   }
   )
 
+  private statsInner = signal<IStats | null>(null);
+  private statsLoaded = false;
+
+  stats = computed(() => {
+    if (!this.statsLoaded) {
+      this.statsLoaded = true;
+
+      this.getStats().subscribe({
+        next: (res) => this.statsInner.set(res),
+        error: (err) => console.log(err)
+      });
+    }
+
+    return this.statsInner();
+  });
+
 
   getDisciplineList() {
-    if (this.disciplineList().length === 0) {
-      this.refreshDisciplines();
-    }
+    this.getDisciplines().subscribe({
+      next: (list) => {
+        this.disciplineList.set(list);
+      },
+      error: (err) => console.log(err)
+    });
     return this.disciplineList;
   }
 
@@ -43,7 +66,6 @@ export class ApiService {
     this.getDisciplineList();
     return this.disciplineMap;
   }
-
 
   getTeacherList() {
     if (this.teacherList().length === 0) {
@@ -68,6 +90,7 @@ export class ApiService {
     })
   }
 
+
   refreshTeachers() {
     this.getTeachers().subscribe({
       next: (list) => {
@@ -80,6 +103,24 @@ export class ApiService {
   }
   getTeachers() {
     return this.http.get<ITeacher[]>('http://localhost/api/professors/');
+  }
+  getMyPending() {
+    return this.http.get<IPendingDiscipline[]>('http://localhost/api/pending/mypending/');
+  }
+  getAllPending() {
+    return this.http.get<IPendingDiscipline[]>('http://localhost/api/pending/allpending/');
+  }
+  getMyPendingTeachers() {
+    return this.http.get<IPendingTeacher[]>('http://localhost/api/pending-professors/mypending/');
+  }
+  getAllPendingTeachers() {
+    return this.http.get<IPendingTeacher[]>('http://localhost/api/pending-professors/allpending/');
+  }
+  getStats() {
+    return this.http.get<IStats>('http://localhost/api/stats/');
+  }
+  getUserProfile(id: number) {
+    return this.http.get<IProfile>('http://localhost/api/users/' + id.toString() + '/profile/');
   }
   getDisciplines() {
     return this.http.get<IDiscipline[]>('http://localhost/api/disciplines/');
@@ -100,9 +141,12 @@ export class ApiService {
     return this.http.get<IComment>('http://localhost/api/comments/' + id.toString() + "/comment_detail/", { headers: { "Content-Type": "application/json" } });
   }
 
-  postComment(id: number, content: string, rating: number) {
-
-    return this.http.post('http://localhost/api/comments/', { discipline: id, content: content, rating: rating }, { headers: { "Content-Type": "application/json" } });
+  postComment(id: number, content: string, rating: number, professor: number) {
+    return this.http.post(
+      'http://localhost/api/comments/',
+      { discipline: id, content: content, rating: rating, professor: professor },
+      { headers: { "Content-Type": "application/json" } }
+    );
   }
   postLikeComment(id: number) {
     return this.http.post('http://localhost/api/comments/' + id.toString() + "/like/", { discipline: id, }, { headers: { "Content-Type": "application/json" } });
@@ -118,11 +162,21 @@ export class ApiService {
   postPending(name: string) {
     return this.http.post('http://localhost/api/pending/', { name: name }, { headers: { "Content-Type": "application/json" } });
   }
+  postPendingTeacher(name: string, surname: string, discipline: number | null) {
+    return this.http.post(
+      'http://localhost/api/pending-professors/',
+      { name, surname, discipline },
+      { headers: { "Content-Type": "application/json" } }
+    );
+  }
   postBlacklist(refresh: string) {
     return this.http.post('http://localhost/api/token/blacklist/', { refresh: refresh }, { headers: { "Content-Type": "application/json" } });
   }
   approvePending(id: number) {
     return this.http.post('http://localhost/api/pending/' + id.toString() + "/approve/", { headers: { "Content-Type": "application/json" } });
+  }
+  approvePendingTeacher(id: number) {
+    return this.http.post('http://localhost/api/pending-professors/' + id.toString() + "/approve/", { headers: { "Content-Type": "application/json" } });
   }
   setActive(id: number) {
     this.activeDiscipline.set(this.disciplineMap()[id]);

@@ -122,6 +122,14 @@ body {
     background-color: #f5f6f8;
     border: 1px solid #cdd4dc;
     padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.empty-state {
+    margin: 0;
+    color: #666;
 }
 
 .pending-row {
@@ -129,11 +137,6 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-}
-
-.empty-state {
-    margin: 0;
-    color: #666;
 }
 
 .approve-btn {
@@ -164,13 +167,15 @@ body {
 
 .offer-input {
     width: 100%;
-    min-height: 130px;
-    resize: vertical;
     border: 1px solid #a7b0ba;
     background-color: #fafafa;
     padding: 12px;
     font: inherit;
     color: inherit;
+}
+
+.short-input {
+    min-height: 44px;
 }
 
 .status-msg {

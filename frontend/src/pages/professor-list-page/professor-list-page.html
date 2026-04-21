@@ -13,16 +13,16 @@
         <div class="sidebar col">
             <h4>Board Statistics</h4>
             <div style="font-size: 11px; line-height: 1.6;">
-                Disciplines: 1,024<br>
-                Professors: 1,024<br>
-                Comments: 45,902<br>
-                Lovely KBTU students: 45,902<br>
+                Disciplines: {{this.api.stats()?.disciplines_count}}<br>
+                Professors: {{this.api.stats()?.teachers_count}}<br>
+                Comments: {{this.api.stats()?.comments_count}}<br>
+                Lovely KBTU students: {{this.api.stats()?.users_count}}<br>
                 Best rated Professor : N/A
             </div>
             <h4 style="margin-top: 15px;">FAQ</h4>
             <div class="faq-item">
-                <span class="faq-q">How do I offer discipline?</span>
-                <span class="faq-a">If you havent yet found it out, maybe you shouldn't</span>
+                <span class="faq-q">How do I offer a professor?</span>
+                <span class="faq-a">Use the button in the list header to suggest a new teacher.</span>
             </div>
             <div class="faq-item">
                 <span class="faq-q">Forgotten password?</span>
@@ -31,9 +31,12 @@
         </div>
 
         <div class="discipline-list col">
-            <div class="list-header">👤|Teachers available : {{buttons().length}}</div>
+            <div class="list-header header-row">
+                <p>Teachers available : {{buttons().length}}</p>
+                <button class="offer-link" (click)="onOfferClicked()">Offer new teacher</button>
+            </div>
             @for(btn of buttons();track $index){
-            <app-button-component [id]="btn.id" [action]="btn.name"
+            <app-button-component [id]="btn.id" [action]="btn.name + ' ' + btn.surname"
                 (clickedEvent)="onButtonClicked($event)"></app-button-component>
             }
         </div>

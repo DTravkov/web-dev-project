@@ -1,4 +1,5 @@
 import { IDiscipline } from "./i-discipline";
+import { ITeacher } from "./i-teacher";
 import { IUser } from "./i-user";
 
 export interface IComment {

@@ -158,6 +158,32 @@
             border-bottom: 1px solid #aaa;
         }
 
+        .header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .header-row p {
+            margin: 0;
+        }
+
+        .offer-link {
+            border: 1px solid #7b8795;
+            background-color: #eef2f6;
+            color: #163a5a;
+            font-weight: bold;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+        }
+
+        .offer-link:hover {
+            background-color: #ffffff;
+        }
+
         .list-item {
             padding: 12px;
             background-color: #efefef;
@@ -203,4 +229,19 @@
         .faq-a {
             font-size: 11px;
             color: #555;
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .header-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }

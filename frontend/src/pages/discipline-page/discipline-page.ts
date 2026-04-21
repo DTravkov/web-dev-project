@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { StarRatingComponent } from '../../components/star-rating-component/star-rating-component';
 import { CommentComponent } from '../../components/comment-component/comment-component';
 import { concatMap, switchMap } from 'rxjs';
+import { ITeacher } from '../../model/i-teacher';
 
 @Component({
   selector: 'app-discipline-page',
@@ -23,10 +24,14 @@ export class DisciplinePage implements OnInit {
   discipline = signal<IDiscipline | null>(null);
   commentsMap = signal<Record<number, IComment>>({});
   commentsArr = computed(() => Object.values(this.commentsMap()))
+  teachers = computed<ITeacher[]>(() => {
+    return this.api.getTeacherList()().filter(teacher => teacher.discipline === this.id);
+  });
 
 
   currentComment = signal<string>("");
   currentRating = signal<number>(0);
+  selectedTeacherId = signal('');
 
   errorMsg = signal<string | null>(null);
 
@@ -54,13 +59,17 @@ export class DisciplinePage implements OnInit {
       this.errorMsg.set("The rating must be in range (1-5).");
       return;
     }
-    this.api.postComment(this.discipline()!.id, this.currentComment(), this.currentRating()).subscribe({
+    const selectedTeacher = this.selectedTeacherId() === '' ? null : Number(this.selectedTeacherId());
+
+    this.api.postComment(this.discipline()!.id, this.currentComment(), this.currentRating(), selectedTeacher!).subscribe({
       next: (response) => {
         this.fetchComments();
         this.currentComment.set("");
         this.currentRating.set(0);
+        this.selectedTeacherId.set('');
       },
       error: (err) => {
+        console.log(this.selectedTeacherId())
         console.error('Login failed');
       },
     });
@@ -107,6 +116,11 @@ export class DisciplinePage implements OnInit {
 
   clearErrorMsg() {
     this.errorMsg.set(null)
+  }
+
+  onTeacherChanged(value: string) {
+    this.clearErrorMsg();
+    this.selectedTeacherId.set(value);
   }
 
   updateCommentsMap(id: number, comment: IComment) {
